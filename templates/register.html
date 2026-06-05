@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Registrazione — WalletMap{% endblock %}
+
+{% block content %}
+    <section class="auth-section">
+        <article class="win auth-card">
+            <header class="win-titlebar">
+                <div class="traffic-lights" aria-hidden="true">
+                    <span class="tl-close"></span>
+                    <span class="tl-min"></span>
+                    <span class="tl-max"></span>
+                </div>
+                <div class="win-title">Registrazione</div>
+            </header>
+
+            <div class="auth-body">
+                <h1 class="auth-title">Registrazione</h1>
+                <p class="auth-sub">Crea un account per tracciare le tue spese e gestire il budget.</p>
+
+                <form action="/register" method="POST" class="auth-form" novalidate>
+                    {# Token CSRF richiesto da Flask-WTF #}
+                    {{ form.hidden_tag() }}
+
+                    <div class="field">
+                        {{ form.username.label }}
+                        {{ form.username() }}
+                        {% for error in form.username.errors %}
+                            <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="field">
+                        {{ form.email.label }}
+                        {{ form.email() }}
+                        {% for error in form.email.errors %}
+                            <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="field">
+                        {{ form.password.label }}
+                        {{ form.password() }}
+                        {% for error in form.password.errors %}
+                            <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="field">
+                        {{ form.confirm_password.label }}
+                        {{ form.confirm_password() }}
+                        {% for error in form.confirm_password.errors %}
+                            <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    {{ form.submit(class='btn-primary') }}
+                </form>
+
+                <p class="auth-foot">
+                    Hai già un account? <a href="/login">Login</a>
+                </p>
+            </div>
+        </article>
+    </section>
+{% endblock %}

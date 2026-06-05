@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(awk 'NR>=1285' static/css/style.css)",
+      "Bash(grep -vE '^\\\\s*\\(/\\\\* line \\\\*/|/\\\\* \\\\.\\\\.\\\\. \\\\*/|\\)\\\\s*$')",
+      "Bash(python3 -c ' *)",
+      "Bash(python3)",
+      "Bash(lsof -nP -iTCP:5000)",
+      "Bash(./venv/bin/pip show *)",
+      "Bash(./venv/bin/pip install *)",
+      "Bash(./venv/bin/python -c \"import email_validator; print\\('OK:', email_validator.__version__\\)\")",
+      "Bash(venv/bin/pip install *)",
+      "Bash(cat /Users/sun_ecomputer/Desktop/IED/PYTHON/WalletMap/venv/bin/python3 2>/dev/null || ls -la /Users/sun_ecomputer/Desktop/IED/PYTHON/WalletMap/venv/bin/python* 2>/dev/null)",
+      "Read(//Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/bin/**)",
+      "Bash(/Users/sun_ecomputer/Desktop/IED/PYTHON/esame/my_weather/venv/bin/python3 -m pip install email-validator --quiet)",
+      "Bash(/Users/sun_ecomputer/Desktop/IED/PYTHON/esame/my_weather/venv/bin/python3 -c \"import email_validator; print\\('OK:', email_validator.__version__\\)\")",
+      "Bash(/Users/sun_ecomputer/Desktop/IED/PYTHON/esame/my_weather/venv/bin/python3 -c ' *)",
+      "Bash(python -m py_compile app.py)",
+      "Bash(python3 -c \"import secrets; print\\(secrets.token_hex\\(32\\)\\)\")",
+      "Bash(pkill -f \"flask run\")"
+    ]
+  }
+}

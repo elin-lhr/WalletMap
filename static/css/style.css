@@ -1,0 +1,2621 @@
+/* ============================================================
+   myWeather — STYLE (FONDAZIONE)
+   Base globale del design system: NEO-BRUTALISM × DYNAMIC CHAOS × MAXIMALIST.
+   Contiene SOLO le fondamenta: reset, body, texture, tipografia, link,
+   scrollbar, container e utility. I componenti dell'interfaccia stanno in
+   components.css. I design token stanno in variables.css.
+
+   Ordine di caricamento in base.html:
+     variables.css  →  style.css  →  components.css
+
+   NOTA SUI CONFLITTI: dove la richiesta divergeva dal design system, ha
+   vinto il DESIGN SYSTEM (vedi commenti "[design system]" qui sotto).
+   ============================================================ */
+
+/* Import dei font (Archivo Black / Bebas Neue / Space Grotesk) */
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Space+Grotesk:wght@500;700&display=swap');
+
+/* ===== RESET ================================================
+   box-sizing coerente e azzeramento di margini/padding di default. */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: auto;
+}
+
+/* ===== CURSORI GLOBALI ======================================
+   Cursori brutalisti custom: freccia gialla ovunque, rosa sugli interattivi. */
+* {
+    cursor: var(--cursor-default), auto;
+}
+
+a, button, .navbar-links a, .forecast-card, .detail {
+    cursor: var(--cursor-pointer), pointer;
+}
+
+/* ===== BODY (BASE) ==========================================
+   [design system] font del corpo, sfondo "carta" e testo nero.
+   line-height: 1 e font-weight: 700 imposti dal design system
+   (hanno la precedenza sul valore 1.6 richiesto). */
+body {
+    font-family: var(--font-body);
+    font-size: var(--font-size-base);
+    color: var(--black);
+    background: var(--white);
+    line-height: 1;
+    font-weight: 700;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Texture a grana (rumore) sovrapposta a tutta la pagina */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.18;
+    pointer-events: none;
+    z-index: 999;
+    mix-blend-mode: multiply;
+}
+
+/* Righe diagonali decorative sullo sfondo */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: repeating-linear-gradient(
+        45deg,
+        transparent 0px,
+        transparent 80px,
+        rgba(0, 0, 0, 0.03) 80px,
+        rgba(0, 0, 0, 0.03) 81px
+    );
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* ===== TIPOGRAFIA ===========================================
+   [design system] titoli in Archivo Black, MAIUSCOLO, line-height compatta.
+   Le dimensioni vengono dalla scala font in variables.css; i componenti
+   con classi proprie (es. .hero h1, .search-title) le sovrascrivono. */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 900;
+    line-height: 0.9;
+    color: var(--black);
+    text-transform: uppercase;
+    margin-bottom: var(--space-md);
+}
+
+h1 { font-size: var(--font-size-h1); }
+h2 { font-size: var(--font-size-h2); }
+h3 { font-size: var(--font-size-h3); }
+h4 { font-size: var(--font-size-h4); }
+
+p {
+    color: var(--black);
+}
+
+/* ===== LINK =================================================
+   [design system] link brutalisti: Archivo Black, MAIUSCOLO, senza
+   sottolineatura; in hover invertono i colori (sfondo nero, testo giallo).
+   Questo ha la precedenza sulla richiesta "colore primario + underline". */
+a {
+    color: var(--black);
+    text-decoration: none;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+a:hover {
+    background: var(--black);
+    color: var(--yellow);
+}
+
+/* ===== SCROLLBAR & SELEZIONE ================================
+   Scrollbar squadrata in bianco/nero e selezione del testo gialla. */
+::-webkit-scrollbar {
+    width: 16px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--white);
+    border-left: 4px solid var(--black);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--black);
+    border: 2px solid var(--white);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--white);
+    border: 2px solid var(--black);
+}
+
+::selection {
+    background: var(--yellow);
+    color: var(--black);
+}
+
+/* ===== CONTAINER ============================================
+   Contenitore centrato per i contenuti di pagina. */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 var(--space-md);
+}
+
+/* ===== UTILITY ==============================================
+   Classi di servizio riutilizzabili. */
+.text-center {
+    text-align: center;
+}
+
+.mt-lg {
+    margin-top: var(--space-lg);
+}
+
+.mb-lg {
+    margin-bottom: var(--space-lg);
+}
+
+
+/* ============================================================
+   COMPONENTI — interfaccia in stile NEO-BRUTALISM
+   (navbar, hero, forecast, città, auth, profilo, history, modale)
+   ============================================================ */
+
+/* ========== NAVBAR ========== */
+.navbar {
+    background: var(--black);
+    color: var(--white);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: var(--border-extra);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+}
+
+.navbar-brand {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    text-transform: uppercase;
+    color: var(--white);
+    position: relative;
+    padding: 0 16px;
+    border: 3px solid var(--white);
+    transform: skewX(-6deg);
+    animation: glitchBrand 6s steps(2) infinite;
+}
+
+@keyframes glitchBrand {
+    0%, 90%, 100% {
+        transform: skewX(-6deg) translate(0, 0);
+        text-shadow: none;
+    }
+    91% {
+        transform: skewX(-6deg) translate(2px, 0);
+        text-shadow: -3px 0 var(--white), 3px 0 var(--black);
+    }
+    93% {
+        transform: skewX(-6deg) translate(-2px, 0);
+        text-shadow: 3px 0 var(--white), -3px 0 var(--black);
+    }
+    95% {
+        transform: skewX(-6deg) translate(0, 0);
+        text-shadow: none;
+    }
+}
+
+.navbar-links {
+    display: flex;
+    list-style: none;
+    gap: 0;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+}
+
+.navbar-links li {
+    border-left: 2px solid var(--white);
+}
+
+.navbar-links li:first-child {
+    border-left: none;
+}
+
+.navbar-links a {
+    color: var(--white);
+    text-decoration: none;
+    padding: 8px 22px;
+    text-transform: uppercase;
+    transition: var(--transition-hard);
+    display: block;
+    position: relative;
+}
+
+.navbar-links a:hover {
+    background: var(--yellow);
+    color: var(--black);
+    transform: scale(1.05) skewX(-4deg);
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 12px;
+        padding: var(--space-md);
+    }
+    .navbar-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        font-size: 18px;
+    }
+    .navbar-links a {
+        padding: 6px 12px;
+    }
+}
+
+/* ===== NAVBAR: STATO SCROLLED =================================
+   Classe aggiunta via JS quando la pagina è scrollata.
+   [design system] sfondo resta nero — sfondo bianco e box-shadow sono
+   incompatibili con il design system brutalista. Il bordo inferiore diventa
+   giallo come segnale visivo sul nero, usando --shadow-sm come offset. */
+.navbar.scrolled {
+    border-bottom-color: var(--yellow);
+    box-shadow: var(--shadow-sm);
+}
+
+/* ===== NAVBAR: MOBILE ≤ 640px ==================================
+   Sotto i 640px il menu scompare del tutto. Il breakpoint 768px
+   (che lo porta a capo) resta invariato e gestisce la fascia intermedia.
+   [design system] nessun hamburger o overlay: non previsti. */
+@media (max-width: 640px) {
+    .navbar-links {
+        display: none;
+    }
+}
+
+/* ========== MARQUEE BANNER (after navbar) ========== */
+.navbar::after {
+    content: 'WALLETMAP ★ SPESE ★ BUDGET ★ RISPARMIO ★ TRACKER ★ ENTRATE ★ USCITE ★ FINANCE ★ ' 'WALLETMAP ★ SPESE ★ BUDGET ★ RISPARMIO ★ TRACKER ★ ENTRATE ★ USCITE ★ FINANCE ★ ' 'WALLETMAP ★ SPESE ★ BUDGET ★ RISPARMIO ★ TRACKER ★ ENTRATE ★ USCITE ★ FINANCE ★ ' 'WALLETMAP ★ SPESE ★ BUDGET ★ RISPARMIO ★ TRACKER ★ ENTRATE ★ USCITE ★ FINANCE ★ ';
+    position: absolute;
+    bottom: -52px;
+    left: 0;
+    background: var(--yellow);
+    color: var(--black);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 4px;
+    padding: 10px 0;
+    border-bottom: var(--border-thick);
+    white-space: nowrap;
+    will-change: transform;
+    animation: nav-marquee 22s linear infinite;
+}
+
+@keyframes nav-marquee {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(-25%, 0, 0); }
+}
+
+@keyframes marquee {
+    0% { text-indent: 0; }
+    100% { text-indent: -1500px; }
+}
+
+/* ========== MAIN CONTENT ========== */
+.content {
+    flex: 1;
+    max-width: 1400px;
+    width: 100%;
+    margin: 60px auto 0;
+    padding: 60px 40px;
+    position: relative;
+    z-index: 1;
+}
+
+@media (max-width: 768px) {
+    .content {
+        padding: 30px var(--space-md);
+        margin-top: var(--space-xl);
+    }
+}
+
+/* ========== FOOTER ========== */
+.footer {
+    background: var(--black);
+    color: var(--white);
+    text-align: left;
+    padding: 32px 40px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin-top: 100px;
+    border-top: var(--border-extra);
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.footer::before {
+    content: '////////////';
+    position: absolute;
+    top: 50%;
+    right: 40px;
+    transform: translateY(-50%);
+    font-size: 24px;
+    letter-spacing: 0;
+}
+
+.footer p {
+    color: var(--white);
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== FOOTER: SOTTO-COMPONENTI ================================
+   Classi additive per strutturare il contenuto del footer.
+   Il .footer base (sfondo nero, bordo, padding, margin-top 100px)
+   non viene modificato: è già conforme al design system.
+
+   Token inesistenti rimappati:
+     --color-dark              → var(--black)  (già usato da .footer)
+     rgba(255,255,255,0.7)     → var(--white)  (DS: bianco carta pieno)
+     font-weight: bold         → 900           (DS: massimalista)
+     --transition              → var(--transition-snap)
+     hover color white         → var(--yellow) (DS: accento su sfondo nero)
+     border-top 1px rgba(…)   → 2px dashed rgba(255,250,235,0.2)
+                                 (DS usa tratteggiato; 1px solid non esiste) */
+
+/* Wrapper interno centrato */
+.footer-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    position: relative;
+    z-index: 1;
+}
+
+/* Logo / brand nel footer */
+.footer-brand {
+    font-family: var(--font-display);
+    font-size: var(--font-size-lg);
+    font-weight: 900;
+    color: var(--white);
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+    text-decoration: none;
+}
+
+.footer-brand:hover {
+    color: var(--yellow);
+    background: transparent;
+}
+
+/* Lista link orizzontale */
+.footer-links {
+    display: flex;
+    gap: var(--space-lg);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+}
+
+.footer-links a {
+    font-family: var(--font-label);
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--white);
+    text-decoration: none;
+    transition: color var(--transition-snap);
+}
+
+.footer-links a:hover {
+    color: var(--yellow);
+    background: transparent;
+}
+
+/* Riga copyright in fondo */
+.footer-copy {
+    font-family: var(--font-label);
+    font-size: var(--font-size-sm);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--white);
+    text-align: center;
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 2px dashed rgba(255, 250, 235, 0.2);
+    position: relative;
+    z-index: 1;
+    width: 100%;
+}
+
+/* Mobile ≤ 640px: colonna centrata */
+@media (max-width: 640px) {
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    .footer-links {
+        justify-content: center;
+    }
+}
+
+/* ========== DASHBOARD LAYOUT ========== */
+
+/* Intestazione della dashboard: padding verticale e titolo con username.
+   [design system] span.username segue il pattern .welcome strong
+   (chip nero/giallo ruotato) invece di color: --color-primary (token
+   inesistente). --font-size-xl aggiunto in variables.css (28px). */
+.dashboard-header {
+    padding: var(--space-xl) 0 var(--space-lg);
+}
+
+.dashboard-header h1 {
+    font-family: var(--font-display);
+    font-size: var(--font-size-xl);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    line-height: 0.9;
+    color: var(--black);
+}
+
+/* Username evidenziato come chip brutalista nero/giallo */
+.dashboard-header h1 span.username {
+    background: var(--black);
+    color: var(--yellow);
+    padding: 2px 12px;
+    display: inline-block;
+    transform: rotate(-1deg);
+    margin: 0 4px;
+}
+
+/* Griglia responsive delle città: auto-fill di base, poi colonne fisse
+   ai breakpoint tablet (640px) e desktop (1024px).
+   La .city-grid già esistente (auto-fill 220px) non viene modificata
+   perché già implementata (design system). .cities-grid è la nuova
+   variante con i breakpoint espliciti. */
+.cities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--space-lg);
+    margin-top: var(--space-lg);
+}
+
+/* Tablet ≥ 640px: 2 colonne fisse */
+@media (min-width: 640px) {
+    .cities-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Desktop ≥ 1024px: 3 colonne fisse */
+@media (min-width: 1024px) {
+    .cities-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Titolo di sezione con bordo inferiore brutalista.
+   [design system] border-bottom: 2px solid --color-primary →
+   var(--border-thick) (4px solid black): il design system usa sempre
+   bordi spessi e neri, mai sottili né colorati. */
+.section-title {
+    font-family: var(--font-display);
+    font-size: var(--font-size-lg);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+    line-height: 0.9;
+    color: var(--black);
+    display: inline-block;
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: var(--border-thick);
+}
+
+/* ========== WELCOME BANNER ========== */
+.welcome {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(20px, 2.6vw, 28px);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--lime);
+    border: var(--border-thick);
+    box-shadow: 8px 8px 0 var(--black);
+    padding: 12px 20px;
+    display: inline-block;
+    margin-bottom: 32px;
+    transform: rotate(-0.8deg);
+}
+
+.welcome strong {
+    font-family: 'Archivo Black', sans-serif;
+    background: var(--black);
+    color: var(--yellow);
+    padding: 2px 10px;
+    margin: 0 4px;
+    letter-spacing: 2px;
+    display: inline-block;
+    transform: rotate(1.5deg);
+}
+
+/* ========== SAVED CITIES ========== */
+.saved-cities {
+    margin: 60px 0 60px;
+    padding: 24px 28px;
+    background: var(--white);
+    border: var(--border-extra);
+    box-shadow: var(--shadow-brutal);
+    transform: rotate(0.3deg);
+    position: relative;
+}
+
+.saved-cities::before {
+    content: '◆ CITTÀ';
+    position: absolute;
+    top: -18px;
+    left: 20px;
+    background: var(--pink);
+    color: var(--black);
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 14px;
+    letter-spacing: 4px;
+    padding: 4px 12px;
+    border: 3px solid var(--black);
+    transform: rotate(-2deg);
+}
+
+.saved-cities h2 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(28px, 4.5vw, 44px);
+    letter-spacing: -1.5px;
+    text-transform: uppercase;
+    margin: 8px 0 18px;
+    color: var(--black);
+}
+
+.cities-empty {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--yellow);
+    border: 3px solid var(--black);
+    padding: 10px 16px;
+    display: inline-block;
+    transform: rotate(-1deg);
+}
+
+.city-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 0;
+}
+
+.city-chip {
+    background: var(--cyan);
+    border: var(--border-thick);
+    box-shadow: 6px 6px 0 var(--black);
+    padding: 10px 16px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    transition: var(--transition-snap);
+}
+
+.city-chip:hover {
+    background: var(--pink);
+    transform: translate(-3px, -3px);
+    box-shadow: 10px 10px 0 var(--black);
+}
+
+.city-chip .city-name {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 20px;
+    letter-spacing: -0.5px;
+    text-transform: uppercase;
+}
+
+.city-chip .city-country {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    opacity: 0.7;
+}
+
+
+/* ===== WEATHER CARD: SOTTO-COMPONENTI =========================
+   Classi per il contenuto interno delle .city-card (additive).
+   La .city-card stessa non viene modificata: colori, bordi, ombre,
+   rotazioni e hover del design system hanno la precedenza.
+
+   Token inesistenti rimappati:
+     --color-white   → var(--white)    (sfondo carta)
+     --color-primary → var(--black)    (testo principale brutalista)
+     --color-gray    → var(--black) + opacity 0.55 (no token grigio)
+     --color-light   → var(--black)    (bordi sempre neri e spessi)
+     --shadow / -lg  → --shadow-brutal / --shadow-brutal-lg
+     --transition    → --transition-snap
+     --radius        → 0 (design system: tutto squadrato, no border-radius)
+     --font-size-sm/lg/2xl → aggiunti in variables.css */
+
+/* Intestazione della card: nome città + codice paese affiancati */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+}
+
+/* Nome città nell'intestazione */
+.card-header .city-name {
+    font-family: var(--font-display);
+    font-size: var(--font-size-lg);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+    color: var(--black);
+}
+
+/* Codice paese (es. "IT") — attenuato col design system */
+.card-header .city-code {
+    font-family: var(--font-label);
+    font-size: var(--font-size-sm);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--black);
+    opacity: 0.55;
+}
+
+/* Emoji / icona meteo centrata */
+.card-emoji {
+    display: block;
+    font-size: 2.5rem;
+    text-align: center;
+    margin: var(--space-sm) 0;
+    line-height: 1;
+}
+
+/* Temperatura principale */
+.card-temp {
+    font-family: var(--font-display);
+    font-size: var(--font-size-2xl);
+    font-weight: 900;
+    text-align: center;
+    letter-spacing: -2px;
+    line-height: 0.9;
+    /* [design system] scaleY brutalista + text-stroke */
+    transform: scaleY(1.12);
+    transform-origin: center top;
+    -webkit-text-stroke: 1px var(--black);
+    color: var(--black);
+}
+
+/* Descrizione testuale del meteo */
+.card-description {
+    font-family: var(--font-label);
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+    color: var(--black);
+    opacity: 0.7;
+}
+
+/* Piè della card: dati secondari (umidità, vento…) affiancati */
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--space-md);
+    padding-top: var(--space-sm);
+    /* [design system] 1px solid light → bordo nero spesso (var(--border-thick)) */
+    border-top: var(--border-thick);
+    font-family: var(--font-label);
+    font-size: var(--font-size-sm);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--black);
+}
+
+/* ================================================================ */
+
+/* ===== PULSANTI — BASE E VARIANTI =================================
+   .btn è la struttura condivisa (inline-flex, font, cursor, bordo base).
+   Le varianti (.btn-primary, .btn-danger, ecc.) aggiungono colori e ombre.
+   Funzionano sia insieme (class="btn btn-danger") sia da soli.
+
+   Token inesistenti rimappati:
+     --radius-sm / --radius     → 0   (DS: tutto squadrato)
+     --color-primary            → var(--black)
+     --color-primary-dark       → var(--yellow)  (inversione hover)
+     --color-success            → var(--lime)
+     --color-danger             → var(--pink)
+     --transition               → var(--transition-snap)
+     font-weight: 600           → 900 (DS: massimalista)
+     border: none               → var(--border-thick)  (DS: bordi sempre presenti)
+     hover translateY(-1px)     → translate(-3px,-3px) + hard shadow (DS pattern) */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-md);
+    font-family: var(--font-display);
+    font-size: var(--font-size-base);
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    border: var(--border-thick);
+    box-shadow: 6px 6px 0 var(--black);
+    cursor: var(--cursor-pointer), pointer;
+    transition: var(--transition-snap);
+    color: var(--black);
+    background: var(--white);
+}
+
+.btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 10px 10px 0 var(--black);
+}
+
+.btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--black);
+}
+
+/* .btn-success — lime: il verde del design system brutalista */
+.btn-success {
+    background: var(--lime);
+    color: var(--black);
+    border: var(--border-thick);
+    box-shadow: 6px 6px 0 var(--black);
+    cursor: var(--cursor-pointer), pointer;
+    transition: var(--transition-snap);
+}
+
+.btn-success:hover {
+    background: var(--yellow);
+    transform: translate(-3px, -3px);
+    box-shadow: 10px 10px 0 var(--black);
+}
+
+.btn-success:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--black);
+}
+
+/* .btn-outline — trasparente con bordo; hover: inversione nero/giallo */
+.btn-outline {
+    background: transparent;
+    color: var(--black);
+    border: var(--border-thick);
+    box-shadow: 6px 6px 0 var(--black);
+    cursor: var(--cursor-pointer), pointer;
+    transition: var(--transition-snap);
+}
+
+.btn-outline:hover {
+    background: var(--yellow);
+    transform: translate(-3px, -3px);
+    box-shadow: 10px 10px 0 var(--black);
+}
+
+.btn-outline:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--black);
+}
+
+/* Taglie */
+.btn-sm {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--font-size-sm);
+    letter-spacing: 1px;
+    box-shadow: 4px 4px 0 var(--black);
+}
+
+.btn-lg {
+    padding: var(--space-sm) var(--space-xl);
+    font-size: var(--font-size-lg);
+    letter-spacing: 3px;
+    box-shadow: 8px 8px 0 var(--black);
+}
+
+/* Larghezza piena */
+.btn-full {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+
+/* ================================================================ */
+
+/* Bottone "Rimuovi" — variante pericolo */
+.btn-danger {
+    font-family: var(--font-display);
+    font-size: var(--font-size-base);
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--pink);
+    border: var(--border-thick);
+    box-shadow: 5px 5px 0 var(--black);
+    padding: var(--space-sm) var(--space-md);
+    cursor: var(--cursor-pointer), pointer;
+    transition: var(--transition-snap);
+}
+
+.btn-danger:hover {
+    background: var(--black);
+    color: var(--pink);
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 var(--pink);
+}
+
+.btn-danger:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--black);
+}
+
+/* ========== HERO ========== */
+.hero {
+    background: var(--white);
+    color: var(--black);
+    padding: 80px 0 60px;
+    margin-bottom: 80px;
+    position: relative;
+    border-top: var(--border-extra);
+    border-bottom: var(--border-extra);
+    overflow: visible;
+    animation: heroEntry 0.4s steps(4) both;
+}
+
+@keyframes heroEntry {
+    0% {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.hero::before {
+    content: '◤ NOW ◢';
+    position: absolute;
+    top: -20px;
+    right: 40px;
+    background: var(--pink);
+    color: var(--black);
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 18px;
+    padding: 6px 16px;
+    letter-spacing: 4px;
+    transform: rotate(3deg);
+    z-index: 5;
+    border: 3px solid var(--black);
+    animation: blink 2s steps(2) infinite;
+}
+
+@keyframes blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0.3; }
+}
+
+.hero::after {
+    content: '★';
+    position: absolute;
+    bottom: 30px;
+    right: 60px;
+    font-size: 120px;
+    line-height: 1;
+    color: var(--black);
+    transform: rotate(20deg);
+    animation: starSpin 8s linear infinite;
+    z-index: 1;
+}
+
+@keyframes starSpin {
+    0% { transform: rotate(20deg) scale(1); }
+    50% { transform: rotate(200deg) scale(1.15); }
+    100% { transform: rotate(380deg) scale(1); }
+}
+
+.hero h1 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(52px, 9vw, 112px);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -3px;
+    text-transform: uppercase;
+    color: var(--black);
+    margin: 0;
+    padding: 0 32px;
+    word-break: break-word;
+    transform: skewX(-3deg);
+    animation: glitchTitle 5s steps(2) infinite;
+    position: relative;
+    z-index: 2;
+}
+
+@keyframes glitchTitle {
+    0%, 92%, 100% {
+        transform: skewX(-3deg) translate(0, 0);
+        text-shadow: none;
+    }
+    93% {
+        transform: skewX(-3deg) translate(-4px, 0);
+        text-shadow: 6px 0 var(--black);
+    }
+    95% {
+        transform: skewX(-3deg) translate(4px, 0);
+        text-shadow: -6px 0 var(--black);
+    }
+    97% {
+        transform: skewX(-3deg) translate(0, 2px);
+        text-shadow: 0 -4px var(--black);
+    }
+}
+
+.temperature-display {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(96px, 16vw, 184px);
+    font-weight: 900;
+    line-height: 0.85;
+    letter-spacing: -6px;
+    color: var(--black);
+    padding: 0 32px;
+    margin: 12px 0 8px;
+    transform: scaleY(1.15);
+    transform-origin: left top;
+    position: relative;
+    z-index: 3;
+    -webkit-text-stroke: 1px var(--black);
+    animation: tempJitter 0.3s steps(2) infinite;
+}
+
+@keyframes tempJitter {
+    0%, 100% { transform: scaleY(1.15) translateX(0); }
+    50% { transform: scaleY(1.15) translateX(1px); }
+}
+
+.weather-description {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 4vw, 56px);
+    text-transform: uppercase;
+    margin: 24px 32px 40px;
+    color: var(--black);
+    background: var(--yellow);
+    display: inline-block;
+    padding: 12px 24px;
+    letter-spacing: 4px;
+    transform: rotate(-1.5deg);
+    border: 4px solid var(--black);
+    box-shadow: var(--shadow-brutal);
+    position: relative;
+    z-index: 3;
+}
+
+/* Riga: temperatura a sinistra, box umidità spinto a destra */
+.hero-temp-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding-right: 40px;
+}
+
+.weather-details {
+    display: flex;
+    gap: 0;
+    margin: 0;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 3;
+}
+
+.detail {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background: var(--cyan);
+    border: var(--border-thick);
+    padding: 40px 52px;
+    min-width: 320px;
+    box-shadow: var(--shadow-brutal);
+    transition: var(--transition-snap);
+    transform: rotate(-2deg);
+    margin-right: 24px;
+    margin-bottom: 24px;
+}
+
+.detail:nth-child(2) {
+    transform: rotate(2deg);
+    margin-top: -16px;
+    background: var(--lime);
+}
+
+.detail:hover {
+    background: var(--pink);
+    color: var(--black);
+    transform: rotate(0deg) translate(-6px, -6px);
+    box-shadow: 18px 18px 0 var(--black);
+}
+
+.detail-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-weight: 700;
+}
+
+.detail-value {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(68px, 7vw, 104px);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -2px;
+}
+
+@media (max-width: 768px) {
+    .hero {
+        padding: var(--space-xl) 0 var(--space-lg);
+    }
+    .hero h1 {
+        padding: 0 var(--space-md);
+        letter-spacing: -3px;
+    }
+    .temperature-display {
+        padding: 0 var(--space-md);
+        letter-spacing: -8px;
+    }
+    .hero-temp-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        padding-right: 0;
+    }
+    .weather-description {
+        margin: var(--space-md) var(--space-md) 24px;
+        font-size: 22px;
+    }
+    .weather-details {
+        margin: 24px var(--space-md) 0;
+    }
+    .detail {
+        min-width: 0;
+        padding: 28px var(--space-lg);
+    }
+    .detail-value {
+        font-size: 56px;
+    }
+}
+
+/* ========== RAIN WARNING ========== */
+.rain-warning {
+    background: var(--pink);
+    color: var(--black);
+    padding: 32px 40px;
+    margin-bottom: 80px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(20px, 3vw, 36px);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    line-height: 1.1;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    position: relative;
+    border: var(--border-extra);
+    box-shadow: 20px 20px 0 var(--yellow), 20px 20px 0 4px var(--black);
+    transform: rotate(-1.5deg);
+    animation: shakeAlert 0.5s steps(4) infinite, slideInChaos 0.4s steps(3);
+    overflow: hidden;
+}
+
+@keyframes shakeAlert {
+    0%, 100% { transform: rotate(-1.5deg) translate(0, 0); }
+    25% { transform: rotate(-1.5deg) translate(-2px, 2px); }
+    50% { transform: rotate(-1.4deg) translate(2px, -2px); }
+    75% { transform: rotate(-1.6deg) translate(-2px, -2px); }
+}
+
+@keyframes slideInChaos {
+    0% { opacity: 0; transform: rotate(-1.5deg) translateX(-100px); }
+    100% { opacity: 1; transform: rotate(-1.5deg) translateX(0); }
+}
+
+.rain-warning::before {
+    content: '!';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    background: var(--yellow);
+    color: var(--black);
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 48px;
+    border: 4px solid var(--black);
+    transform: rotate(15deg);
+}
+
+.rain-warning::after {
+    content: '/// ALERT /// ALERT /// ALERT ///';
+    position: absolute;
+    bottom: 4px;
+    right: 0;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    color: var(--black);
+    opacity: 0.55;
+    white-space: nowrap;
+    animation: marquee 8s linear infinite;
+}
+
+.rain-warning-icon {
+    font-size: 48px;
+    flex-shrink: 0;
+    filter: grayscale(100%) contrast(200%);
+    animation: iconFlash 0.5s steps(2) infinite;
+    margin-left: 50px;
+}
+
+@keyframes iconFlash {
+    0%, 100% { transform: scale(1); filter: grayscale(100%) contrast(200%); }
+    50% { transform: scale(1.1); filter: grayscale(100%) contrast(200%) invert(1); }
+}
+
+
+
+/* ============================================================
+   AUTH FORMS (login / register) — appended for /register & /login templates
+   ============================================================ */
+.auth-section {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 0 80px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 460px;
+    background: var(--white);
+    border: var(--border-extra);
+    box-shadow: var(--shadow-brutal-lg);
+    transform: rotate(-1deg);
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-card .win-titlebar {
+    background: var(--black);
+    color: var(--white);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: var(--border-thick);
+}
+
+.auth-card .traffic-lights { display: flex; gap: 6px; }
+.auth-card .traffic-lights span {
+    width: 14px; height: 14px;
+    border: 2px solid var(--white);
+    display: inline-block;
+}
+.auth-card .traffic-lights .tl-close { background: var(--pink); }
+.auth-card .traffic-lights .tl-min   { background: var(--yellow); }
+.auth-card .traffic-lights .tl-max   { background: var(--lime); }
+
+.auth-card .win-title {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--white);
+}
+
+.auth-body {
+    padding: 28px 28px 32px;
+    background: var(--white);
+}
+
+.auth-title {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(28px, 4.2vw, 42px);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -1.5px;
+    text-transform: uppercase;
+    color: var(--black);
+    margin: 0 0 10px;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.auth-sub {
+    font-family: var(--font-body);
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--black);
+    background: var(--yellow);
+    display: inline-block;
+    padding: var(--space-xs) 12px;
+    border: 3px solid var(--black);
+    margin-bottom: 24px;
+    transform: rotate(0.5deg);
+}
+
+.auth-form { display: flex; flex-direction: column; gap: var(--space-md); }
+
+.field { display: flex; flex-direction: column; gap: var(--space-xs); }
+
+.field label {
+    font-family: var(--font-label);
+    font-size: var(--font-size-base);
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--black);
+}
+
+.field input {
+    font-family: var(--font-body);
+    font-size: var(--font-size-base);
+    font-weight: 700;
+    color: var(--black);
+    background: var(--white);
+    border: var(--border-thick);
+    padding: 12px var(--space-sm);
+    outline: none;
+    box-shadow: 6px 6px 0 var(--black);
+    transition: var(--transition-snap);
+}
+
+.field input::placeholder {
+    color: var(--black);
+    opacity: 0.4;
+    font-weight: 700;
+}
+
+.field input:focus {
+    background: var(--yellow);
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 var(--pink);
+}
+
+.field input:invalid:not(:placeholder-shown) {
+    background: var(--pink);
+    box-shadow: 6px 6px 0 var(--black);
+}
+
+.btn-primary {
+    margin-top: 6px;
+    padding: var(--space-md) 22px;
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--white);
+    background: var(--black);
+    border: var(--border-thick);
+    box-shadow: 8px 8px 0 var(--pink);
+    cursor: var(--cursor-pointer), pointer;
+    transition: var(--transition-snap);
+}
+
+.btn-primary:hover {
+    background: var(--yellow);
+    color: var(--black);
+    transform: translate(-4px, -4px);
+    box-shadow: 14px 14px 0 var(--black);
+}
+
+.btn-primary:active {
+    transform: translate(2px, 2px);
+    box-shadow: 4px 4px 0 var(--black);
+}
+
+.auth-foot {
+    margin-top: 24px;
+    padding-top: var(--space-md);
+    border-top: 3px dashed var(--black);
+    font-family: var(--font-label);
+    font-size: var(--font-size-sm);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--black);
+    text-align: center;
+}
+
+.auth-foot a {
+    font-family: var(--font-display);
+    background: var(--cyan);
+    color: var(--black);
+    padding: 2px var(--space-sm);
+    border: 3px solid var(--black);
+    margin-left: var(--space-xs);
+    display: inline-block;
+    transform: rotate(-2deg);
+}
+
+.auth-foot a:hover {
+    background: var(--pink);
+    color: var(--black);
+    transform: rotate(0) scale(1.05);
+}
+
+/* Logged-in username chip in navbar */
+.navbar-links .nav-user {
+    background: var(--yellow);
+    color: var(--black);
+    font-family: 'Archivo Black', sans-serif;
+    letter-spacing: 1px;
+}
+
+.navbar-links .nav-user:hover {
+    background: var(--pink);
+    color: var(--white);
+    transform: scale(1.05) skewX(-4deg);
+}
+
+/* ===== ALIAS CLASSI FORM =========================================
+   Nomi alternativi mappati 1:1 sulle classi del design system.
+   Le due famiglie (.field/.auth-* e .form-group/.form-*) sono
+   intercambiabili: usare l'una o l'altra produce lo stesso risultato.
+   Valori hardcoded sostituiti con variabili; stile visivo invariato.
+
+   Rimappature token inesistenti:
+     --color-white / --color-dark   → var(--white) / var(--black)
+     --color-primary / --color-gray → var(--black) (no token primario)
+     --color-danger                 → var(--pink)  (danger = rosa)
+     --radius / --radius-sm         → 0  (design system: squadrato)
+     --shadow                       → var(--shadow-brutal-lg)
+     --transition                   → var(--transition-snap)
+     focus box-shadow rgba(52,152,219,.15) → var(--shadow-pink) brutalista */
+
+/* .form-container — equivalente a .auth-section + .auth-card */
+.form-container {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    background: var(--white);
+    border: var(--border-extra);
+    box-shadow: var(--shadow-brutal-lg);
+    padding: var(--space-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+/* .form-title — equivalente a .auth-title */
+.form-title {
+    font-family: var(--font-display);
+    font-size: var(--font-size-xl);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -1.5px;
+    text-transform: uppercase;
+    color: var(--black);
+    text-align: center;
+    margin-bottom: var(--space-lg);
+    word-break: break-word;
+}
+
+/* .form-group — equivalente a .field */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-md);
+}
+
+.form-group label {
+    font-family: var(--font-label);
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--black);
+    display: block;
+    margin-bottom: var(--space-xs);
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: var(--font-size-base);
+    font-weight: 700;
+    color: var(--black);
+    background: var(--white);
+    border: var(--border-thick);
+    padding: var(--space-sm) var(--space-md);
+    outline: none;
+    box-shadow: 6px 6px 0 var(--black);
+    transition: var(--transition-snap);
+}
+
+.form-group input[type="text"]::placeholder,
+.form-group input[type="email"]::placeholder,
+.form-group input[type="password"]::placeholder {
+    color: var(--black);
+    opacity: 0.4;
+    font-weight: 700;
+}
+
+/* Focus: sfondo giallo + traslazione + ombra rosa (design system) */
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus {
+    background: var(--yellow);
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 var(--pink);
+}
+
+/* .error-message — equivalente a span.error (errori WTForms) */
+.error-message {
+    font-family: var(--font-label);
+    font-size: var(--font-size-sm);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--pink);
+    border: 3px solid var(--black);
+    padding: var(--space-xs) var(--space-sm);
+    display: block;
+    margin-top: var(--space-xs);
+    align-self: flex-start;
+}
+
+/* .form-link — equivalente a .auth-foot */
+.form-link {
+    margin-top: var(--space-md);
+    padding-top: var(--space-sm);
+    border-top: 3px dashed var(--black);
+    font-family: var(--font-label);
+    font-size: var(--font-size-sm);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--black);
+    text-align: center;
+}
+
+.form-link a {
+    font-family: var(--font-display);
+    background: var(--cyan);
+    color: var(--black);
+    padding: 2px var(--space-sm);
+    border: 3px solid var(--black);
+    margin-left: var(--space-xs);
+    display: inline-block;
+    transform: rotate(-2deg);
+}
+
+.form-link a:hover {
+    background: var(--pink);
+    color: var(--black);
+    transform: rotate(0) scale(1.05);
+}
+
+/* ================================================================ */
+
+/* ========== PROFILE PAGE ========== */
+.profile-section {
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.profile-card {
+    background: var(--white);
+    border: var(--border-extra);
+    box-shadow: var(--shadow-brutal-lg);
+    padding: 36px 36px 32px;
+    position: relative;
+    transform: rotate(-0.5deg);
+}
+
+.profile-card::before {
+    content: 'ACCOUNT';
+    position: absolute;
+    top: -20px;
+    left: 24px;
+    background: var(--black);
+    color: var(--yellow);
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 16px;
+    letter-spacing: 4px;
+    padding: 6px 14px;
+    border: 3px solid var(--black);
+}
+
+.profile-head {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: var(--border-thick);
+}
+
+.profile-avatar {
+    width: 88px;
+    height: 88px;
+    background: var(--pink);
+    border: var(--border-thick);
+    box-shadow: 8px 8px 0 var(--black);
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 56px;
+    font-weight: 900;
+    color: var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    transform: rotate(-3deg);
+}
+
+.profile-id h1 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(36px, 6vw, 56px);
+    line-height: 0.9;
+    letter-spacing: -2px;
+    margin: 0 0 8px;
+    word-break: break-word;
+}
+
+.profile-tag {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 3px;
+    background: var(--lime);
+    color: var(--black);
+    border: 3px solid var(--black);
+    padding: 4px 10px;
+    display: inline-block;
+    transform: rotate(-1deg);
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 32px;
+}
+
+.info-row {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 12px 16px;
+    background: var(--white);
+    border: var(--border-thick);
+    box-shadow: 6px 6px 0 var(--black);
+}
+
+.info-row:nth-child(odd) { background: var(--cyan); }
+.info-row:nth-child(even) { background: var(--yellow); }
+
+.info-row dt {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--black);
+    min-width: 140px;
+    flex-shrink: 0;
+}
+
+.info-row dd {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--black);
+    word-break: break-word;
+}
+
+/* Sezione statistiche del profilo: tre schede affiancate */
+.profile-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 18px;
+    margin-bottom: 32px;
+}
+
+.stat-card {
+    background: var(--cyan);
+    border: var(--border-thick);
+    box-shadow: 6px 6px 0 var(--black);
+    padding: 22px 18px;
+    text-align: center;
+    transition: var(--transition-snap);
+}
+
+.stat-card:nth-child(2) { background: var(--yellow); }
+.stat-card:nth-child(3) { background: var(--lime); }
+
+.stat-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 10px 10px 0 var(--black);
+}
+
+.stat-value {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 2.4rem;
+    line-height: 1;
+    letter-spacing: -1px;
+    color: var(--black);
+    word-break: break-word;
+}
+
+.stat-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 10px;
+    color: var(--black);
+}
+
+.profile-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-logout {
+    font-family: var(--font-display);
+    font-size: 22px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--white);
+    background: var(--black);
+    padding: var(--space-md) var(--space-lg);
+    border: var(--border-thick);
+    box-shadow: 8px 8px 0 var(--pink);
+    transition: var(--transition-snap);
+    display: inline-block;
+    transform: rotate(1deg);
+}
+
+.btn-logout:hover {
+    background: var(--pink);
+    color: var(--black);
+    transform: rotate(0) translate(-4px, -4px);
+    box-shadow: 14px 14px 0 var(--black);
+}
+
+@media (max-width: 640px) {
+    .profile-head { flex-direction: column; align-items: flex-start; gap: 14px; }
+    .info-row { flex-direction: column; gap: var(--space-xs); }
+    .info-row dt { min-width: 0; }
+}
+
+/* Flash messages */
+.flash-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 22px;
+}
+
+.flash {
+    padding: 12px 16px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--black);
+    border: var(--border-thick);
+    box-shadow: 6px 6px 0 var(--black);
+    transform: rotate(-0.7deg);
+}
+
+.flash-error {
+    background: var(--pink);
+}
+
+.flash-success {
+    background: var(--lime);
+}
+
+/* ============================================================
+   ALERT / FLASH MESSAGES — variante .alert
+   Classi additive rispetto alle .flash-* già esistenti.
+   Usabili in alternativa con la stessa semantica.
+
+   Token inesistenti rimappati:
+     --color-success → var(--lime)    --color-danger  → var(--pink)
+     --color-warning → var(--yellow)  --color-primary → var(--cyan)
+     --radius-sm     → 0  (DS: squadrato)
+     font-weight 500 → 700  (DS: minimo)
+     animation ease  → steps(4)  (DS: scattoso)
+     sfondi pastello → palette DS (lime/pink/yellow/cyan)
+     testi colorati  → var(--black)
+     border-left colorato → border-left var(--border-extra) 8px (accento DS) ============================================================ */
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: rotate(-0.5deg) translateY(-10px); }
+    to   { opacity: 1; transform: rotate(-0.5deg) translateY(0); }
+}
+
+/* Contenitore dei messaggi */
+.flash-messages {
+    padding: 0 var(--space-md);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Base .alert */
+.alert {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-lg);
+    margin-bottom: var(--space-sm);
+    font-family: var(--font-label);
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--black);
+    border: var(--border-thick);
+    box-shadow: var(--shadow-sm);
+    transform: rotate(-0.5deg);
+    animation: fadeInDown 0.3s steps(4) both;
+}
+
+/* Emoji icon via ::before */
+.alert::before {
+    font-style: normal;
+    font-size: 1.1rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+/* Varianti: sfondo DS + accento left border extra-spesso */
+.alert-success {
+    background: var(--lime);
+    border-left: var(--border-extra);
+}
+.alert-success::before { content: '✅'; }
+
+.alert-error {
+    background: var(--pink);
+    border-left: var(--border-extra);
+}
+.alert-error::before { content: '❌'; }
+
+.alert-warning {
+    background: var(--yellow);
+    border-left: var(--border-extra);
+}
+.alert-warning::before { content: '⚠️'; }
+
+.alert-info {
+    background: var(--cyan);
+    border-left: var(--border-extra);
+}
+.alert-info::before { content: 'ℹ️'; }
+
+/* ============================================================
+   SEARCH PAGE — modulo di ricerca + risultato meteo
+   ============================================================ */
+
+/* Titolo della pagina */
+.search-title {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(40px, 7vw, 84px);
+    line-height: 0.9;
+    letter-spacing: -3px;
+    text-transform: uppercase;
+    margin-bottom: 36px;
+    transform: skewX(-3deg);
+}
+
+/* Riquadro che contiene il modulo — largo quasi quanto la pagina */
+.search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: var(--white);
+    border: var(--border-extra);
+    box-shadow: var(--shadow-brutal);
+    padding: 34px 40px;
+    transform: rotate(-0.6deg);
+}
+
+.search-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Riga con campo di testo e pulsante affiancati */
+.search-row {
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+}
+
+.search-row .input-field {
+    flex: 1;
+    min-width: 0;
+}
+
+.search-row .btn-primary {
+    flex-shrink: 0;
+    margin-top: 0;
+    white-space: nowrap;
+    padding: 18px 44px;
+    font-size: 24px;
+}
+
+/* Etichetta del campo città */
+.search-form label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--black);
+}
+
+/* Campo di testo della città */
+.input-field {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--black);
+    background: var(--white);
+    border: var(--border-thick);
+    padding: 18px 20px;
+    outline: none;
+    box-shadow: 6px 6px 0 var(--black);
+    transition: var(--transition-snap);
+}
+
+.input-field:focus {
+    background: var(--yellow);
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 var(--pink);
+}
+
+/* Messaggio di errore di validazione */
+.error {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--pink);
+    border: 3px solid var(--black);
+    padding: 4px 10px;
+    display: inline-block;
+    align-self: flex-start;
+}
+
+/* Contenitore: box meteo principale + previsioni affiancati */
+.weather-result {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 36px;
+    margin-top: 56px;
+}
+
+/* Descrizione del meteo */
+.weather-desc {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(22px, 3vw, 36px);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    background: var(--yellow);
+    border: 4px solid var(--black);
+    box-shadow: var(--shadow-brutal);
+    padding: 8px 16px;
+    display: inline-block;
+    margin: 16px 0;
+    transform: rotate(-1.2deg);
+}
+
+/* Umidità */
+.weather-humidity {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* Riga finale del box: umidità a sinistra, salva città a destra, allineati */
+.weather-card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+/* Form del bottone "salva città" */
+.save-city-form {
+    margin: 0;
+}
+
+.btn-save {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--lime);
+    border: var(--border-thick);
+    box-shadow: 6px 6px 0 var(--black);
+    padding: 14px 22px;
+    cursor: var(--cursor-pointer), pointer;
+    transition: var(--transition-snap);
+}
+
+.btn-save:hover {
+    background: var(--yellow);
+    transform: translate(-4px, -4px);
+    box-shadow: 12px 12px 0 var(--black);
+}
+
+.btn-save:active {
+    transform: translate(2px, 2px);
+    box-shadow: 3px 3px 0 var(--black);
+}
+
+/* Pannello con le previsioni delle prossime ore, accanto al box principale */
+.forecast-mini {
+    flex: 1 1 260px;
+    background: var(--white);
+    border: var(--border-extra);
+    box-shadow: var(--shadow-brutal);
+    padding: 26px 22px 24px;
+    position: relative;
+    transform: rotate(-0.6deg);
+}
+
+.forecast-mini::before {
+    content: '→ PROSSIME ORE';
+    position: absolute;
+    top: -18px;
+    left: 20px;
+    background: var(--pink);
+    color: var(--black);
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 13px;
+    letter-spacing: 3px;
+    padding: 4px 12px;
+    border: 3px solid var(--black);
+    transform: rotate(2deg);
+}
+
+/* Titolo del pannello previsioni */
+.forecast-mini-title {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 26px;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+    margin: 6px 0 18px;
+}
+
+/* Elenco delle ore */
+.forecast-mini-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0;
+}
+
+/* Singola riga: ora + temperatura + descrizione */
+.forecast-mini-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border: var(--border-thick);
+    box-shadow: 5px 5px 0 var(--black);
+    padding: 10px 14px;
+    transition: var(--transition-snap);
+}
+
+.forecast-mini-item:nth-child(odd) {
+    background: var(--yellow);
+}
+
+.forecast-mini-item:nth-child(even) {
+    background: var(--lime);
+}
+
+.forecast-mini-item:hover {
+    background: var(--pink);
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 var(--black);
+}
+
+/* Ora della previsione */
+.forecast-mini-time {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    flex-shrink: 0;
+    min-width: 54px;
+}
+
+/* Temperatura prevista */
+.forecast-mini-temp {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 30px;
+    line-height: 1;
+    letter-spacing: -1px;
+    flex-shrink: 0;
+}
+
+/* Descrizione breve del meteo previsto */
+.forecast-mini-desc {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1.2;
+    margin-left: auto;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+/* Messaggio "nessun risultato" */
+.no-result {
+    margin-top: 40px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(22px, 3vw, 32px);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--pink);
+    border: var(--border-extra);
+    box-shadow: var(--shadow-brutal);
+    padding: 16px 22px;
+    display: inline-block;
+    transform: rotate(-1deg);
+}
+
+@media (max-width: 768px) {
+    .search-form,
+    .weather-card {
+        max-width: 100%;
+    }
+    .search-row {
+        flex-direction: column;
+    }
+    .weather-temp {
+        letter-spacing: -4px;
+    }
+}
+
+/* ============================================================
+   MODALE DI CONFERMA — popup "rimuovere la città?"
+   ============================================================ */
+
+/* Sfondo scuro a tutta pagina */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 10, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 1000;
+    animation: modalFade 0.25s ease both;
+}
+
+/* Quando ha l'attributo hidden il modal sparisce davvero */
+.modal-overlay[hidden] {
+    display: none;
+}
+
+@keyframes modalFade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Riquadro del modal */
+.modal-box {
+    background: var(--white);
+    border: var(--border-extra);
+    box-shadow: var(--shadow-brutal-lg);
+    padding: 34px 32px 28px;
+    max-width: 460px;
+    width: 100%;
+    position: relative;
+    transform: rotate(-1.5deg);
+    animation: modalPop 0.45s ease-out both;
+}
+
+/* Animazione di entrata: il riquadro "salta" dentro con un rimbalzo */
+@keyframes modalPop {
+    0%   { opacity: 0; transform: scale(0.5) rotate(-12deg); }
+    55%  { opacity: 1; transform: scale(1.08) rotate(4deg); }
+    78%  { transform: scale(0.96) rotate(-3deg); }
+    100% { opacity: 1; transform: scale(1) rotate(-1.5deg); }
+}
+
+/* Etichetta angolare, come gli altri box del sito */
+.modal-box::before {
+    content: '◆ CONFERMA';
+    position: absolute;
+    top: -18px;
+    left: 24px;
+    background: var(--pink);
+    color: var(--black);
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 13px;
+    letter-spacing: 3px;
+    padding: 4px 12px;
+    border: 3px solid var(--black);
+    transform: rotate(-2deg);
+}
+
+.modal-title {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 30px;
+    line-height: 0.95;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+    margin: 8px 0 14px;
+}
+
+.modal-text {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--black);
+    margin-bottom: 26px;
+}
+
+/* Nome della città evidenziato nel testo */
+.modal-text strong {
+    background: var(--yellow);
+    border: 2px solid var(--black);
+    padding: 1px 6px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 14px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+/* Bottoni del modal */
+.btn-modal-cancel,
+.btn-modal-confirm {
+    font-family: var(--font-display);
+    font-size: var(--font-size-base);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--black);
+    border: var(--border-thick);
+    box-shadow: 5px 5px 0 var(--black);
+    padding: 12px 20px;
+    cursor: var(--cursor-pointer), pointer;
+    transition: var(--transition-snap);
+}
+
+.btn-modal-cancel {
+    background: var(--white);
+}
+
+.btn-modal-cancel:hover {
+    background: var(--cyan);
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 var(--black);
+}
+
+.btn-modal-confirm {
+    background: var(--pink);
+}
+
+.btn-modal-confirm:hover {
+    background: var(--black);
+    color: var(--pink);
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 var(--pink);
+}
+
+.btn-modal-cancel:active,
+.btn-modal-confirm:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--black);
+}
+
+/* ============================================================
+   HISTORY PAGE — storico delle ricerche
+   ============================================================ */
+
+/* Titolo della pagina */
+.history-title {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(40px, 7vw, 84px);
+    line-height: 0.9;
+    letter-spacing: -3px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    transform: skewX(-3deg);
+}
+
+/* Sottotitolo "X ricerche totali" — badge giallo angolato */
+.history-subtitle {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--yellow);
+    border: 3px solid var(--black);
+    box-shadow: 6px 6px 0 var(--black);
+    padding: 8px 16px;
+    display: inline-block;
+    margin-bottom: 44px;
+    transform: rotate(-1deg);
+}
+
+/* Elenco delle ricerche */
+.history-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0;
+}
+
+/* Singola riga: città a sinistra, data a destra */
+.history-item {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+    background: var(--cyan);
+    border: var(--border-thick);
+    box-shadow: 6px 6px 0 var(--black);
+    padding: 16px 22px;
+    transition: var(--transition-snap);
+}
+
+.history-item:nth-child(even) {
+    background: var(--lime);
+}
+
+.history-item:hover {
+    background: var(--pink);
+    transform: translate(-4px, -4px);
+    box-shadow: 12px 12px 0 var(--black);
+}
+
+/* Nome della città cercata */
+.history-item strong {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 24px;
+    letter-spacing: -0.5px;
+    text-transform: uppercase;
+    word-break: break-word;
+}
+
+/* Data della ricerca */
+.history-date {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--black);
+    margin-left: auto;
+}
+
+@media (max-width: 768px) {
+    .history-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+    .history-date {
+        margin-left: 0;
+    }
+}
+
+
+/* ============================================================
+   EMPTY STATE
+   Componente per sezioni senza contenuto.
+   [design system] color-gray / color-dark non esistono →
+   var(--black) + opacity. Lo stile "soft centrato" è adattato
+   con bordo thick e leggera rotazione (pattern brutalista).
+   ============================================================ */
+
+.empty-state {
+    text-align: center;
+    padding: var(--space-xl);
+    border: var(--border-thick);
+    box-shadow: var(--shadow-sm);
+    background: var(--white);
+    transform: rotate(-0.3deg);
+    position: relative;
+}
+
+.empty-state .empty-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: var(--space-md);
+    line-height: 1;
+}
+
+.empty-state h3 {
+    font-family: var(--font-display);
+    font-size: var(--font-size-lg);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+    color: var(--black);
+    margin-bottom: var(--space-sm);
+}
+
+.empty-state p {
+    font-family: var(--font-body);
+    font-size: var(--font-size-base);
+    color: var(--black);
+    opacity: 0.6;
+    margin-bottom: var(--space-lg);
+}
+
+
+/* ============================================================
+   RESPONSIVE — BLOCCO CONSOLIDATO
+   Regole additive per mobile e tablet. I componenti del design
+   system mantengono il loro stile brutalista; qui si adattano
+   solo dimensioni e layout. Tutti i valori usano i token di
+   variables.css.
+
+   [design system] h1 font-size su mobile scoped a
+   .dashboard-header h1 (non a tutti gli h1): l'hero usa
+   clamp() brutalista che gestisce autonomamente il mobile.
+   ============================================================ */
+
+/* ===== UTILITY: VISIBILITÀ ====================================
+   .hide-mobile → nascosto su mobile, visibile da 640px.
+   .hide-desktop → visibile su mobile, nascosto da 1024px. */
+.hide-mobile {
+    display: none;
+}
+
+.hide-desktop {
+    display: block;
+}
+
+/* ===== MOBILE (≤ 639px) ======================================= */
+@media (max-width: 639px) {
+
+    /* Container più stretto */
+    .container {
+        padding: 0 var(--space-sm);
+    }
+
+    /* Dashboard header ridotto */
+    .dashboard-header {
+        padding: var(--space-lg) 0 var(--space-md);
+    }
+
+    /* Titolo dashboard — scoped: non override l'hero h1 brutalista */
+    .dashboard-header h1 {
+        font-size: var(--font-size-xl);
+    }
+
+    /* Form container: padding e margini laterali ridotti */
+    .form-container {
+        padding: var(--space-lg) var(--space-md);
+        margin: 0 var(--space-sm);
+    }
+
+    /* Griglia città: colonna singola */
+    .cities-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Storico: righe in colonna */
+    .history-list li {
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+
+    /* Utility: hide-mobile attiva su mobile */
+    .hide-mobile {
+        display: none;
+    }
+}
+
+/* ===== TABLET (640px – 1023px) ================================ */
+@media (min-width: 640px) and (max-width: 1023px) {
+
+    /* Griglia città: 2 colonne (variante con range esplicito) */
+    .cities-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Utility: hide-mobile visibile */
+    .hide-mobile {
+        display: block;
+    }
+}
+
+/* ===== DESKTOP (≥ 640px) ====================================== */
+@media (min-width: 640px) {
+
+    /* hide-mobile visibile da tablet in su */
+    .hide-mobile {
+        display: block;
+    }
+}
+
+/* ===== DESKTOP GRANDE (≥ 1024px) ============================== */
+@media (min-width: 1024px) {
+
+    /* hide-desktop nascosto su desktop */
+    .hide-desktop {
+        display: none;
+    }
+}
+
+
+/* ============================================================
+   LOADING & SKELETON — animazioni di caricamento
+   Adattate al design system brutalista:
+
+   Token inesistenti rimappati:
+     --color-light   → var(--border-thick) / rgba(--black, 0.08)
+     --color-primary → var(--yellow)  (accento DS)
+     --radius        → 0  (DS: quadrato, NO border-radius)
+     rgba(255,255,255,0.8) → rgba(255,250,235,0.9) = var(--white) + opacità
+
+   Nota animazioni:
+     spin    → steps(8): rotazione "a scatti" coerente col DS
+     shimmer → linear:   eccezione funzionale — background-position
+               a steps() sarebbe invisibile come skeleton effect
+   ============================================================ */
+
+/* ===== SPINNER ==============================================
+   Quadrato che ruota — NO border-radius: 50% (DS: tutto squadrato).
+   Bordo pieno nero var(--border-thick), faccia superiore gialla
+   come accento (var(--yellow) = colore primario DS). */
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: var(--border-thick);
+    border-top-color: var(--yellow);
+    animation: spin 0.8s steps(8) infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* ===== LOADING OVERLAY ======================================
+   Schermata di attesa a tutto schermo.
+   rgba(255,250,235,0.9) = var(--white) #FFFAEB con opacità.
+   La transizione opacity rende il fade-out fluido. */
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 250, 235, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+}
+
+.loading-overlay.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ===== SKELETON CARD ========================================
+   Placeholder a scheletro per card in caricamento.
+   NO border-radius (DS: squadrato).
+   Shimmer lineare fluido; la classe .fade-out permette la
+   transizione smooth verso il contenuto reale. */
+.skeleton-card {
+    height: 180px;
+    border: var(--border-thick);
+    box-shadow: var(--shadow-sm);
+    animation: shimmer 1.5s linear infinite;
+    background-image: linear-gradient(
+        90deg,
+        var(--white)            25%,
+        rgba(10, 10, 10, 0.08)  50%,
+        var(--white)            75%
+    );
+    background-size: 200% 100%;
+    background-position: 200% 0;
+    transition: opacity 0.3s ease;
+}
+
+.skeleton-card.fade-out {
+    opacity: 0;
+}
+
+/* Griglia reale: entra con fade-in fluido dopo lo skeleton */
+@keyframes fadeInContent {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.grid-fade-in {
+    animation: fadeInContent 0.45s ease forwards;
+}
+
+@keyframes shimmer {
+    from { background-position:  200% 0; }
+    to   { background-position: -200% 0; }
+}

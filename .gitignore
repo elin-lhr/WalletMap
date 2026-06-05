@@ -1,0 +1,37 @@
+# Bytecode Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+venv/
+.venv/
+
+# Variabili d'ambiente — NON committare mai
+.env
+
+# Cartella instance di Flask (database locale)
+instance/
+
+# File database
+*.db
+*.sqlite3
+
+# Cache pytest e coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Distribuzione / build
+dist/
+build/
+*.egg-info/

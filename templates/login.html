@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Login — WalletMap{% endblock %}
+
+{% block content %}
+    <section class="auth-section">
+        <article class="win auth-card">
+            <header class="win-titlebar">
+                <div class="traffic-lights" aria-hidden="true">
+                    <span class="tl-close"></span>
+                    <span class="tl-min"></span>
+                    <span class="tl-max"></span>
+                </div>
+                <div class="win-title">Login</div>
+            </header>
+
+            <div class="auth-body">
+                <h1 class="auth-title">Login</h1>
+                <p class="auth-sub">Accedi per gestire le tue spese e il tuo budget.</p>
+
+                <form action="/login" method="POST" class="auth-form" novalidate>
+                    {# Token CSRF richiesto da Flask-WTF #}
+                    {{ form.hidden_tag() }}
+
+                    <div class="field">
+                        {{ form.username.label }}
+                        {{ form.username() }}
+                        {% for error in form.username.errors %}
+                            <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="field">
+                        {{ form.password.label }}
+                        {{ form.password() }}
+                        {% for error in form.password.errors %}
+                            <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    {{ form.submit(class='btn-primary') }}
+                </form>
+
+                <p class="auth-foot">
+                    Non hai un account? <a href="/register">Registrati</a>
+                </p>
+            </div>
+        </article>
+    </section>
+{% endblock %}

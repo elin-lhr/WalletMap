@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Profilo — {{ user.username }}{% endblock %}
+
+{% block content %}
+    <section class="profile-section">
+        <div class="profile-card">
+            <header class="profile-head">
+                <div class="profile-avatar" aria-hidden="true">{{ user.username[0]|upper }}</div>
+                <div class="profile-id">
+                    <h1>{{ user.username }}</h1>
+                    <p class="profile-tag">Account attivo</p>
+                </div>
+            </header>
+
+            <dl class="profile-info">
+                <div class="info-row">
+                    <dt>Username</dt>
+                    <dd>{{ user.username }}</dd>
+                </div>
+                <div class="info-row">
+                    <dt>Email</dt>
+                    <dd>{{ user.email }}</dd>
+                </div>
+                <div class="info-row">
+                    <dt>Iscritto dal</dt>
+                    <dd>{{ user.created_at.strftime('%d/%m/%Y · %H:%M') }}</dd>
+                </div>
+            </dl>
+
+            <div class="profile-stats">
+                <div class="stat-card">
+                    <div class="stat-value">{{ spese_count }}</div>
+                    <div class="stat-label">Spese registrate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ budget_count }}</div>
+                    <div class="stat-label">Budget attivi</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ abbonamenti_count }}</div>
+                    <div class="stat-label">Abbonamenti</div>
+                </div>
+            </div>
+
+            <div class="profile-actions">
+                <a href="/logout" class="btn-logout">Logout</a>
+            </div>
+        </div>
+    </section>
+{% endblock %}

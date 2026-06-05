@@ -1,0 +1,53 @@
+/* ============================================================
+   myWeather — VARIABLES / DESIGN TOKENS
+   Fondamenta del design system: NEO-BRUTALISM × DYNAMIC CHAOS × MAXIMALIST.
+   Tutti i valori riutilizzabili (colori, bordi, ombre, transizioni, cursori)
+   vivono qui. Le altre regole CSS devono attingere SEMPRE a queste variabili
+   invece di usare valori hardcoded. Vedi DESIGN_SYSTEM.md per i dettagli.
+   ============================================================ */
+
+:root {
+
+    /* ===== COLORI =====================================================
+       Palette fissa a blocchi pieni (niente gradienti, niente tema dark).
+       I colori si usano pieni e si alternano sulle card via :nth-child. */
+    --black:  #0A0A0A;   /* Testo, bordi, ombre, sfondi navbar/footer       */
+    --white:  #FFFAEB;   /* Sfondo pagina: bianco "carta", leggermente caldo */
+    --yellow: #FFE500;   /* Accento primario / highlight / badge            */
+    --pink:   #FF2E93;   /* Accento / azioni distruttive / alert            */
+    --cyan:   #2EC4FF;   /* Superfici card (info)                           */
+    --lime:   #C7F500;   /* Superfici card alternate / successo             */
+
+    /* ===== BORDI ======================================================
+       Sempre neri e squadrati. Niente angoli arrotondati nel sistema. */
+    --border-thick: 4px solid var(--black);   /* Bordo standard: card, bottoni, input        */
+    --border-extra: 8px solid var(--black);   /* Bordo forte: hero, box principali, navbar    */
+
+    /* ===== OMBRE (HARD SHADOW) ========================================
+       Ombre piene senza blur, offsettate. Sull'hover crescono o cambiano
+       colore (effetto "sollevamento"); sull'active si riducono. */
+    --shadow-brutal:    12px 12px 0 var(--black);   /* Ombra standard            */
+    --shadow-brutal-lg: 20px 20px 0 var(--black);   /* Ombra forte (box grandi)  */
+    --shadow-pink:      12px 12px 0 var(--pink);    /* Variante colorata rosa    */
+    --shadow-yellow:    12px 12px 0 var(--yellow);  /* Variante colorata gialla  */
+
+    /* ===== TRANSIZIONI ================================================
+       Niente easing morbido: tutto è istantaneo o a scatto. */
+    --transition-hard: all 0.001s steps(1, end);                          /* Cambio istantaneo (nav link) */
+    --transition-snap: all 0.15s cubic-bezier(0.95, 0.05, 0.795, 0.035);  /* Scatto rapido su hover       */
+
+    /* ===== CURSORI CUSTOM =============================================
+       Frecce SVG brutaliste: gialla di default, rosa sugli interattivi. */
+    --cursor-default: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><polygon points='3,2 3,26 10,20 14,30 19,28 15,18 25,18' fill='%23FFE500' stroke='%230A0A0A' stroke-width='3' stroke-linejoin='miter'/></svg>") 2 2;
+    --cursor-pointer: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'><polygon points='3,2 3,26 10,20 14,32 20,30 16,18 26,18' fill='%23FF2E93' stroke='%230A0A0A' stroke-width='3' stroke-linejoin='miter'/></svg>") 2 2;
+
+    /* ===== TIPOGRAFIA =================================================
+       Tre font da Google Fonts (importati in style.css).
+       Archivo Black = display/titoli/valori (900, MAIUSCOLO, letter-spacing negativo)
+       Bebas Neue    = sotto-titoli, label, nav, badge (condensato, letter-spacing positivo)
+       Space Grotesk = corpo del testo e input (font del body) */
+    --font-display: 'Archivo Black', sans-serif;
+    --font-label:   'Bebas Neue', sans-serif;
+    --font-body:    'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+
+}

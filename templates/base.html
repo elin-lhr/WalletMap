@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}WalletMap{% endblock %}</title>
+    {# Ordine: token → foglio di stile (reset + base + componenti) #}
+    <link rel="stylesheet" href="/static/css/variables.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">WalletMap</div>
+        <ul class="navbar-links">
+            {% if current_user %}
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/registro">Registro</a></li>
+                <li><a href="/budget">Budget</a></li>
+                <li><a href="/abbonamenti">Abbonamenti</a></li>
+                <li><a href="/lista-spesa">Lista Spesa</a></li>
+                <li><a href="/profile" class="nav-user">{{ current_user.username }}</a></li>
+            {% else %}
+                <li><a href="/login">Login</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <main class="content">
+        {# Messaggi flash: errori e conferme mostrati all'utente #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-stack">
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>&copy; {{ current_year }} WalletMap</p>
+    </footer>
+
+</body>
+</html>
