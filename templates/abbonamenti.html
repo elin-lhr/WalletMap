@@ -3,5 +3,123 @@
 {% block title %}Abbonamenti — WalletMap{% endblock %}
 
 {% block content %}
-    <h1>Abbonamenti — coming soon</h1>
+<h1>Abbonamenti</h1>
+
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 32px; align-items: start; margin-top: 32px;">
+
+    {# ── Colonna sinistra: form nuovo abbonamento ── #}
+    <div class="stat-card" style="background: var(--yellow); text-align: left;">
+        <h2 style="margin-bottom: 20px; font-size: 1.4rem;">Nuovo Abbonamento</h2>
+        <form action="/abbonamenti" method="POST" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="field" style="margin-bottom: 14px;">
+                {{ form.nome.label }}
+                {{ form.nome(class='input-field', style='width: 100%; box-sizing: border-box;', placeholder='Netflix, Spotify…') }}
+                {% for error in form.nome.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="field" style="margin-bottom: 14px;">
+                {{ form.importo.label }}
+                {{ form.importo(class='input-field', style='width: 100%; box-sizing: border-box;', placeholder='0.00') }}
+                {% for error in form.importo.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="field" style="margin-bottom: 14px;">
+                {{ form.ciclo.label }}
+                {{ form.ciclo(class='input-field', style='width: 100%; box-sizing: border-box;') }}
+                {% for error in form.ciclo.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="field" style="margin-bottom: 14px;">
+                {{ form.prossimo_rinnovo.label }}
+                {{ form.prossimo_rinnovo(class='input-field', style='width: 100%; box-sizing: border-box;') }}
+                {% for error in form.prossimo_rinnovo.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="field" style="margin-bottom: 20px;">
+                {{ form.giorni_preavviso.label }}
+                {{ form.giorni_preavviso(class='input-field', style='width: 100%; box-sizing: border-box;', placeholder='3') }}
+                {% for error in form.giorni_preavviso.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            {{ form.submit(class='btn-primary', style='width: 100%;', value='Aggiungi Abbonamento') }}
+        </form>
+    </div>
+
+    {# ── Colonna destra: lista abbonamenti ── #}
+    <div>
+        {% if abbonamenti %}
+            {% for a in abbonamenti %}
+            <div style="background: {% if loop.index is odd %}var(--white){% else %}var(--cyan){% endif %}; border: var(--border-thick); box-shadow: var(--shadow-brutal); padding: 20px 24px; margin-bottom: 20px;">
+
+                {# Header: nome + badge ciclo #}
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+                    <h2 style="font-size: 1.3rem; margin-bottom: 0;">{{ a.nome }}</h2>
+                    <span style="font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem; letter-spacing: 3px; background: var(--black); color: var(--yellow); padding: 3px 10px; display: inline-block;">{{ a.ciclo | upper }}</span>
+                </div>
+
+                {# Importo + prossimo rinnovo #}
+                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 700;">
+                    <span>Importo: <strong style="font-family: 'Archivo Black', sans-serif; font-size: 1.1rem; letter-spacing: -0.5px;">€ {{ "%.2f"|format(a.importo) }}</strong></span>
+                    <span>Rinnovo: <strong>{{ a.prossimo_rinnovo.strftime('%d/%m/%Y') }}</strong></span>
+                </div>
+
+                {# Badge giorni al rinnovo #}
+                <div style="margin-bottom: 16px;">
+                    <span style="
+                        font-family: 'Bebas Neue', sans-serif;
+                        font-size: 1rem;
+                        letter-spacing: 2px;
+                        background: {% if a.giorni_al_rinnovo <= a.giorni_preavviso %}var(--pink){% elif a.giorni_al_rinnovo <= 7 %}var(--yellow){% else %}var(--lime){% endif %};
+                        color: var(--black);
+                        border: var(--border-thick);
+                        padding: 4px 12px;
+                        display: inline-block;
+                    ">
+                        {% if a.giorni_al_rinnovo < 0 %}
+                            SCADUTO {{ a.giorni_al_rinnovo | abs }} GIORNI FA
+                        {% elif a.giorni_al_rinnovo == 0 %}
+                            SCADE OGGI
+                        {% elif a.giorni_al_rinnovo == 1 %}
+                            SCADE DOMANI
+                        {% else %}
+                            {{ a.giorni_al_rinnovo }} GIORNI AL RINNOVO
+                        {% endif %}
+                    </span>
+                </div>
+
+                {# Bottoni: Rinnova + Disattiva #}
+                <div style="display: flex; gap: 12px; justify-content: flex-end; flex-wrap: wrap;">
+                    <form action="/abbonamenti/rinnova/{{ a.id }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn-success" style="font-size: 13px; padding: 6px 14px;">Rinnova</button>
+                    </form>
+                    <form action="/abbonamenti/elimina/{{ a.id }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn-danger" style="font-size: 13px; padding: 6px 14px;">Disattiva</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="empty-state">
+            <span class="empty-icon">📅</span>
+            <h3>Nessun abbonamento attivo</h3>
+            <p>Aggiungi i tuoi abbonamenti per tenere traccia dei rinnovi e dei costi.</p>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
 {% endblock %}

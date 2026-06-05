@@ -3,5 +3,85 @@
 {% block title %}Budget — WalletMap{% endblock %}
 
 {% block content %}
-    <h1>Budget — coming soon</h1>
+<h1>Budget</h1>
+
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 32px; align-items: start; margin-top: 32px;">
+
+    {# ── Colonna sinistra: form nuovo budget ── #}
+    <div class="stat-card" style="background: var(--lime); text-align: left;">
+        <h2 style="margin-bottom: 20px; font-size: 1.4rem;">Nuovo Budget</h2>
+        <form action="/budget" method="POST" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="field" style="margin-bottom: 14px;">
+                {{ form.categoria.label }}
+                {{ form.categoria(class='input-field', style='width: 100%; box-sizing: border-box;') }}
+                {% for error in form.categoria.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="field" style="margin-bottom: 14px;">
+                {{ form.limite_mensile.label }}
+                {{ form.limite_mensile(class='input-field', style='width: 100%; box-sizing: border-box;', placeholder='0.00') }}
+                {% for error in form.limite_mensile.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="field" style="margin-bottom: 20px;">
+                {{ form.mese.label }}
+                {{ form.mese(class='input-field', style='width: 100%; box-sizing: border-box;', placeholder='YYYY-MM') }}
+                {% for error in form.mese.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            {{ form.submit(class='btn-primary', style='width: 100%;') }}
+        </form>
+    </div>
+
+    {# ── Colonna destra: lista budget ── #}
+    <div>
+        {% if budgets %}
+            {% for b in budgets %}
+            <div style="background: {% if loop.index is odd %}var(--white){% else %}var(--cyan){% endif %}; border: var(--border-thick); box-shadow: var(--shadow-brutal); padding: 20px 24px; margin-bottom: 20px;">
+
+                {# Header: categoria + mese #}
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px;">
+                    <h2 style="font-size: 1.3rem; margin-bottom: 0;">{{ b.categoria }}</h2>
+                    <span style="font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 3px; opacity: 0.7;">{{ b.mese }}</span>
+                </div>
+
+                {# Barra di avanzamento #}
+                <div style="background: var(--white); border: var(--border-thick); height: 28px; overflow: hidden; margin-bottom: 12px;">
+                    <div style="height: 100%; width: {{ b.percentuale }}%; background: {% if b.percentuale < 75 %}var(--lime){% elif b.percentuale < 100 %}var(--yellow){% else %}var(--pink){% endif %};"></div>
+                </div>
+
+                {# Cifre #}
+                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 700;">
+                    <span>Usato: <strong>€ {{ "%.2f"|format(b.spese_usate) }}</strong></span>
+                    <span>Limite: <strong>€ {{ "%.2f"|format(b.limite_mensile) }}</strong></span>
+                    <span{% if b.rimanente < 0 %} style="color: var(--pink);"{% endif %}>
+                        Rimanente: <strong>€ {{ "%.2f"|format(b.rimanente) }}</strong>
+                    </span>
+                </div>
+
+                {# Elimina #}
+                <form action="/budget/elimina/{{ b.id }}" method="POST" style="text-align: right;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn-danger" style="font-size: 13px; padding: 4px 12px;">Elimina</button>
+                </form>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="empty-state">
+            <span class="empty-icon">📊</span>
+            <h3>Nessun budget impostato</h3>
+            <p>Aggiungi un budget per tenere sotto controllo le tue spese mensili.</p>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
 {% endblock %}

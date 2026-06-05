@@ -17,7 +17,9 @@
       "Bash(/Users/sun_ecomputer/Desktop/IED/PYTHON/esame/my_weather/venv/bin/python3 -c ' *)",
       "Bash(python -m py_compile app.py)",
       "Bash(python3 -c \"import secrets; print\\(secrets.token_hex\\(32\\)\\)\")",
-      "Bash(pkill -f \"flask run\")"
+      "Bash(pkill -f \"flask run\")",
+      "Bash(python -c \"from app import app; print\\('OK'\\)\")",
+      "Bash(python3 -c \"from app import app; print\\('OK'\\)\")"
     ]
   }
 }

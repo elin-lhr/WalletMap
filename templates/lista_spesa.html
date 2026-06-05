@@ -3,5 +3,92 @@
 {% block title %}Lista Spesa — WalletMap{% endblock %}
 
 {% block content %}
-    <h1>Lista Spesa — coming soon</h1>
+<h1>Lista Spesa</h1>
+
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 32px; align-items: start; margin-top: 32px;">
+
+    {# ── Colonna sinistra: form nuova lista ── #}
+    <div class="stat-card" style="background: var(--cyan); text-align: left;">
+        <h2 style="margin-bottom: 16px; font-size: 1.4rem;">Nuova Lista</h2>
+        <form action="/lista-spesa" method="POST" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="field" style="margin-bottom: 16px;">
+                {{ form.prodotti.label }}
+                {{ form.prodotti(
+                    class='input-field',
+                    style='width: 100%; box-sizing: border-box; min-height: 180px; resize: vertical; font-size: 16px; padding: 12px;',
+                    placeholder='Inserisci un prodotto per riga:\nlatte\npane\npasta'
+                ) }}
+                {% for error in form.prodotti.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            {{ form.submit(class='btn-primary', style='width: 100%;', value='Stima prezzi e salva') }}
+
+            <p style="font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; font-weight: 700; margin-top: 10px; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px;">
+                I prezzi sono stime medie per supermercati italiani
+            </p>
+        </form>
+    </div>
+
+    {# ── Colonna destra: storico liste ── #}
+    <div>
+        {% if liste %}
+            {% for lista in liste %}
+            {% set stima = lista.prodotti | from_json if lista.prodotti else {'prodotti': [], 'totale': 0} %}
+            <div style="background: {% if loop.index is odd %}var(--white){% else %}var(--yellow){% endif %}; border: var(--border-thick); box-shadow: var(--shadow-brutal); padding: 20px 24px; margin-bottom: 20px;">
+
+                {# Header: nome + data #}
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px;">
+                    <h2 style="font-size: 1.2rem; margin-bottom: 0;">{{ lista.nome }}</h2>
+                    <span style="font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 3px; opacity: 0.7;">{{ lista.data.strftime('%d/%m/%Y') }}</span>
+                </div>
+
+                {# Tabella prodotti #}
+                {% if stima.prodotti %}
+                <table style="width: 100%; border-collapse: collapse; border: var(--border-thick); margin-bottom: 12px;">
+                    <thead>
+                        <tr style="background: var(--black); color: var(--white);">
+                            <th style="padding: 8px 12px; text-align: left; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-weight: 400;">Prodotto</th>
+                            <th style="padding: 8px 12px; text-align: right; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-weight: 400;">Prezzo stimato</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in stima.prodotti %}
+                        <tr style="border-bottom: 2px solid var(--black); background: {% if loop.index is odd %}var(--white){% else %}rgba(0,0,0,0.04){% endif %};">
+                            <td style="padding: 8px 12px; font-family: 'Space Grotesk', sans-serif; font-weight: 700;">{{ p.nome }}</td>
+                            <td style="padding: 8px 12px; text-align: right; font-family: 'Archivo Black', sans-serif; letter-spacing: -0.5px;">€ {{ "%.2f"|format(p.prezzo_stimato) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr style="background: var(--black); color: var(--white);">
+                            <td style="padding: 10px 12px; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px;">Totale stimato</td>
+                            <td style="padding: 10px 12px; text-align: right; font-family: 'Archivo Black', sans-serif; font-size: 1.1rem; letter-spacing: -0.5px;">€ {{ "%.2f"|format(stima.totale) }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+                {% elif stima.errore is defined %}
+                <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; opacity: 0.6; margin-bottom: 12px;">{{ stima.errore }}</p>
+                {% endif %}
+
+                {# Elimina #}
+                <form action="/lista-spesa/elimina/{{ lista.id }}" method="POST" style="text-align: right;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn-danger" style="font-size: 13px; padding: 4px 12px;">Elimina</button>
+                </form>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="empty-state">
+            <span class="empty-icon">🛒</span>
+            <h3>Nessuna lista salvata</h3>
+            <p>Crea la tua prima lista della spesa e ottieni una stima dei prezzi.</p>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
 {% endblock %}

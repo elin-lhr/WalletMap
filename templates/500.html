@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
 
-{% block title %}Errore del server — WalletMap{% endblock %}
+{% block title %}500 — Errore interno — WalletMap{% endblock %}
 
 {% block content %}
-<div class="error-page">
-    <h1>500</h1>
-    <p>Si è verificato un errore interno. Riprova tra poco.</p>
-    <a href="/" class="btn">Torna alla home</a>
-</div>
+<section class="auth-section">
+    <div class="empty-state" style="max-width: 520px; width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center;">
+        <h1>500</h1>
+        <h2>Qualcosa è andato storto</h2>
+        <p>Si è verificato un errore interno. Riprova tra qualche minuto.</p>
+        <a href="/dashboard" class="btn btn-primary">Torna alla Dashboard</a>
+    </div>
+</section>
 {% endblock %}

@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
 
-{% block title %}Pagina non trovata — WalletMap{% endblock %}
+{% block title %}404 — Pagina non trovata — WalletMap{% endblock %}
 
 {% block content %}
-<div class="error-page">
-    <h1>404</h1>
-    <p>La pagina che cerchi non esiste.</p>
-    <a href="/" class="btn">Torna alla home</a>
-</div>
+<section class="auth-section">
+    <div class="empty-state" style="max-width: 520px; width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center;">
+        <h1>404</h1>
+        <h2>Pagina non trovata</h2>
+        <p>La pagina che cerchi potrebbe essere stata spostata o eliminata.</p>
+        <a href="/dashboard" class="btn btn-primary">Torna alla Dashboard</a>
+    </div>
+</section>
 {% endblock %}
