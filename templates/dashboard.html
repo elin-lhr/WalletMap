@@ -75,7 +75,7 @@
             </div>
             {% endfor %}
             <div style="margin-top: 16px; text-align: right;">
-                <a href="/abbonamenti" class="btn btn-outline btn-sm">Gestisci abbonamenti</a>
+                <a href="{{ url_for('abbonamenti') }}" class="btn btn-outline btn-sm">Gestisci abbonamenti</a>
             </div>
         {% else %}
         <div style="background: var(--lime); border: var(--border-thick); padding: 16px 18px; display: flex; align-items: center; gap: 10px;">

@@ -57,6 +57,20 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/cookie-consent', methods=['POST'])
+def cookie_consent():
+    # Funziona anche per utenti anonimi: nessun @login_required.
+    user_id = session.get('user_id')
+    if user_id:
+        user = db.session.get(User, user_id)
+        if user:
+            user.cookie_consent = True
+            db.session.commit()
+    # Salva sempre il consenso in sessione: copre anche gli utenti non loggati.
+    session['cookie_consent'] = True
+    return redirect(request.referrer or url_for('index'))
+
+
 # ========== Auth Routes ==========
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -133,6 +147,25 @@ def profile():
         budget_count=budget_count,
         abbonamenti_count=abbonamenti_count,
     )
+
+
+@app.route('/delete-account', methods=['POST'])
+@login_required
+def delete_account():
+    user = db.session.get(User, session['user_id'])
+
+    # Elimina prima tutti i dati associati all'utente.
+    Spesa.query.filter_by(user_id=user.id).delete()
+    Budget.query.filter_by(user_id=user.id).delete()
+    Abbonamento.query.filter_by(user_id=user.id).delete()
+    ListaSpesa.query.filter_by(user_id=user.id).delete()
+
+    # Poi elimina l'utente.
+    db.session.delete(user)
+    db.session.commit()
+    session.clear()
+    flash('Account eliminato con successo', 'success')
+    return redirect(url_for('index'))
 
 
 # ========== WalletMap Routes ==========
@@ -424,6 +457,12 @@ def lista_spesa():
             if riga.strip()
         ]
         stima = stima_prezzi(prodotti_list)
+
+        # L'API esterna ha fallito (timeout/rete/risposta non valida).
+        if stima is None:
+            flash('Servizio di stima non disponibile. Riprova tra qualche minuto.', 'error')
+            return redirect(url_for('lista_spesa'))
+
         nuova = ListaSpesa(
             nome='Lista del ' + date.today().strftime('%d/%m/%Y'),
             data=date.today(),

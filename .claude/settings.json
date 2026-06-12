@@ -19,7 +19,26 @@
       "Bash(python3 -c \"import secrets; print\\(secrets.token_hex\\(32\\)\\)\")",
       "Bash(pkill -f \"flask run\")",
       "Bash(python -c \"from app import app; print\\('OK'\\)\")",
-      "Bash(python3 -c \"from app import app; print\\('OK'\\)\")"
+      "Bash(python3 -c \"from app import app; print\\('OK'\\)\")",
+      "Bash(find /Users/sun_ecomputer/Desktop/IED/PYTHON -maxdepth 2 -name \"*.py\" -o -name \"requirements.txt\" | grep -i weather | head -20; ls /Users/sun_ecomputer/Desktop/IED/PYTHON/)",
+      "Read(//Users/sun_ecomputer/Desktop/IED/PYTHON/**)",
+      "Bash(git -C /Users/sun_ecomputer/Desktop/IED/PYTHON/esame/my_weather remote -v)",
+      "Bash(git -C /Users/sun_ecomputer/Desktop/IED/PYTHON/WalletMap remote -v)",
+      "Bash(grep -rn \"onrender\\\\|render.com\" /Users/sun_ecomputer/Desktop/IED/PYTHON/WalletMap --include=\"*.py\" --include=\"*.html\" --include=\"*.txt\" --include=\"*.md\" --include=\"*.json\" ! -path \"*/.git/*\")",
+      "Bash(git -C /Users/sun_ecomputer/Desktop/IED/PYTHON/WalletMap log --oneline)",
+      "Bash(git -C /Users/sun_ecomputer/Desktop/IED/PYTHON/WalletMap rev-list --count HEAD)",
+      "Bash(grep -E \"\\\\.env$|\\\\.env\\\\.|instance/|\\\\.db$\")",
+      "Bash(sqlite3 instance/walletmap.db \"PRAGMA table_info\\(user\\);\")",
+      "Bash(sqlite3 instance/walletmap.db \"SELECT 'users='||count\\(*\\) FROM user;\")",
+      "Bash(sqlite3 instance/walletmap.db \"ALTER TABLE user ADD COLUMN cookie_consent BOOLEAN DEFAULT 0;\")",
+      "Bash(python -m pytest -q)",
+      "Bash(venv/bin/python -m pytest -q)",
+      "Bash(venv/bin/python -m pip list)",
+      "Bash(venv/bin/python --version)",
+      "Bash(FLASK_ENV=testing venv/bin/python -)"
+    ],
+    "additionalDirectories": [
+      "/Users/sun_ecomputer/Desktop/IED/PYTHON/esame/my_weather"
     ]
   }
 }

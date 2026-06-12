@@ -10,7 +10,7 @@
     {# ── Colonna sinistra: form nuovo abbonamento ── #}
     <div class="stat-card" style="background: var(--yellow); text-align: left;">
         <h2 style="margin-bottom: 20px; font-size: 1.4rem;">Nuovo Abbonamento</h2>
-        <form action="/abbonamenti" method="POST" novalidate>
+        <form action="{{ url_for('abbonamenti') }}" method="POST" novalidate>
             {{ form.hidden_tag() }}
 
             <div class="field" style="margin-bottom: 14px;">
@@ -101,11 +101,11 @@
 
                 {# Bottoni: Rinnova + Disattiva #}
                 <div style="display: flex; gap: 12px; justify-content: flex-end; flex-wrap: wrap;">
-                    <form action="/abbonamenti/rinnova/{{ a.id }}" method="POST">
+                    <form action="{{ url_for('rinnova_abbonamento', id=a.id) }}" method="POST">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="btn-success" style="font-size: 13px; padding: 6px 14px;">Rinnova</button>
                     </form>
-                    <form action="/abbonamenti/elimina/{{ a.id }}" method="POST">
+                    <form action="{{ url_for('disattiva_abbonamento', id=a.id) }}" method="POST">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="btn-danger" style="font-size: 13px; padding: 6px 14px;">Disattiva</button>
                     </form>

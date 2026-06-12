@@ -1,11 +1,13 @@
+from __future__ import annotations  # consente 'dict | None' anche su Python 3.9
+
 import os
 import json
 from groq import Groq
 
 
-def stima_prezzi(prodotti: list[str]) -> dict:
+def stima_prezzi(prodotti: list[str]) -> dict | None:
     api_key = os.environ.get('GROQ_API_KEY')
-    client = Groq(api_key=api_key)
+    client = Groq(api_key=api_key, timeout=5)
 
     lista = '\n'.join(f'- {p}' for p in prodotti)
     prompt = (
@@ -33,4 +35,5 @@ def stima_prezzi(prodotti: list[str]) -> dict:
         totale = round(sum(p['prezzo_stimato'] for p in prodotti_out), 2)
         return {'prodotti': prodotti_out, 'totale': totale}
     except Exception:
-        return {'prodotti': [], 'totale': 0.0, 'errore': 'Stima non disponibile'}
+        # Errore di rete/timeout/risposta non valida: il chiamante gestisce None.
+        return None

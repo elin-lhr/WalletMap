@@ -44,7 +44,33 @@
             </div>
 
             <div class="profile-actions">
-                <a href="/logout" class="btn-logout">Logout</a>
+                <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+            </div>
+
+            {# ── Zona pericolosa: eliminazione account con conferma a due passi (solo CSS) ── #}
+            <div class="danger-zone">
+                <h2 class="danger-title">Zona pericolosa</h2>
+                <p class="danger-text">
+                    Questa azione è irreversibile.
+                    Tutti i tuoi dati (spese, budget, abbonamenti, liste)
+                    verranno eliminati definitivamente.
+                </p>
+
+                {# Checkbox nascosta: alterna i due passi senza JavaScript #}
+                <input type="checkbox" id="confirm-delete" class="danger-toggle" hidden>
+
+                {# Passo 1: bottone iniziale #}
+                <label for="confirm-delete" class="btn-danger danger-step-1">Elimina account</label>
+
+                {# Passo 2: conferma effettiva #}
+                <div class="danger-step-2">
+                    <p class="danger-confirm-text">Sei sicuro? L'operazione non può essere annullata.</p>
+                    <form action="{{ url_for('delete_account') }}" method="POST" class="danger-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn-danger">Sì, elimina definitivamente</button>
+                        <label for="confirm-delete" class="btn-cancel">Annulla</label>
+                    </form>
+                </div>
             </div>
         </div>
     </section>

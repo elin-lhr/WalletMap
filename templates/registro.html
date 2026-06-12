@@ -23,8 +23,8 @@
 
 {# ── Export buttons ── #}
 <div style="display: flex; gap: 12px; margin-bottom: 32px; flex-wrap: wrap;">
-    <a href="/export/csv" class="btn btn-outline">Scarica CSV</a>
-    <a href="/export/excel" class="btn btn-success">Scarica Excel</a>
+    <a href="{{ url_for('export_csv') }}" class="btn btn-outline">Scarica CSV</a>
+    <a href="{{ url_for('export_excel') }}" class="btn btn-success">Scarica Excel</a>
 </div>
 
 {# ── Two-column layout: form (1fr) + table (2fr) ── #}
@@ -33,7 +33,7 @@
     {# LEFT — Add new spesa #}
     <div class="stat-card" style="background: var(--cyan); text-align: left;">
         <h2 style="margin-bottom: 20px; font-size: 1.4rem;">Nuova Spesa</h2>
-        <form action="/registro" method="POST" novalidate>
+        <form action="{{ url_for('registro') }}" method="POST" novalidate>
             {{ form.hidden_tag() }}
 
             <div class="field" style="margin-bottom: 14px;">
@@ -109,7 +109,7 @@
                         {% endif %}
                     </td>
                     <td style="padding: 12px 16px; text-align: center;">
-                        <form action="/registro/elimina/{{ spesa.id }}" method="POST">
+                        <form action="{{ url_for('elimina_spesa', id=spesa.id) }}" method="POST">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <button type="submit" class="btn-danger" style="font-size: 13px; padding: 4px 12px;">Elimina</button>
                         </form>

@@ -2619,3 +2619,165 @@ a:hover {
     from { background-position:  200% 0; }
     to   { background-position: -200% 0; }
 }
+
+/* ============================================================
+   COOKIE BANNER (GDPR)
+   Fisso in fondo alla pagina, sopra ogni altro contenuto.
+   Usa solo i token del design system (--black, --white, --space-md).
+   ============================================================ */
+.cookie-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    background: var(--black);
+    color: var(--white);
+    padding: var(--space-md);
+    border-top: var(--border-thick);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+}
+
+.cookie-banner p {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-sm);
+    flex: 1;
+    min-width: 220px;
+}
+
+.cookie-banner form {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+/* ============================================================
+   ZONA PERICOLOSA (eliminazione account)
+   Pannello brutalista coerente col resto del sito: bordo spesso,
+   ombra dura ROSA (colore danger), badge flottante via ::before
+   (come l'etichetta "ACCOUNT" sulla profile-card), font display.
+   Conferma a due passi senza JavaScript: una checkbox nascosta
+   alterna .danger-step-1 e .danger-step-2 via selettore fratello (~).
+   Usa solo i token del design system.
+   ============================================================ */
+.danger-zone {
+    position: relative;
+    margin-top: var(--space-xl);
+    padding: 30px 24px 24px;
+    background: var(--white);
+    border: var(--border-thick);
+    border-color: var(--pink);
+    box-shadow: var(--shadow-pink);
+    transform: rotate(0.5deg);
+}
+
+/* Badge flottante in alto a sinistra, gemello del badge "ACCOUNT". */
+.danger-zone::before {
+    content: '⚠ ATTENZIONE';
+    position: absolute;
+    top: -18px;
+    left: 20px;
+    background: var(--pink);
+    color: var(--black);
+    font-family: var(--font-display);
+    font-size: 14px;
+    letter-spacing: 3px;
+    padding: 5px 12px;
+    border: 3px solid var(--black);
+    transform: rotate(-1.5deg);
+}
+
+.danger-title {
+    font-family: var(--font-display);
+    font-size: var(--font-size-h4);
+    line-height: 0.95;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+    color: var(--pink);
+    -webkit-text-stroke: 1px var(--black);
+    margin: 0 0 var(--space-sm);
+}
+
+.danger-text {
+    font-family: var(--font-body);
+    font-size: var(--font-size-base);
+    font-weight: 700;
+    line-height: 1.4;
+    margin: 0 0 var(--space-md);
+}
+
+/* Passo 1 visibile di default; passo 2 nascosto. */
+.danger-step-2 { display: none; }
+
+/* Quando la checkbox è spuntata: nascondi il passo 1, mostra il passo 2. */
+.danger-toggle:checked ~ .danger-step-1 { display: none; }
+.danger-toggle:checked ~ .danger-step-2 { display: block; }
+
+/* Il bottone-label del passo 1 si comporta come un bottone a blocco. */
+.danger-step-1 {
+    display: inline-block;
+    cursor: var(--cursor-pointer), pointer;
+}
+
+/* Box di conferma evidenziato: sfondo pieno per segnalare il momento critico. */
+.danger-step-2 {
+    background: var(--pink);
+    border: var(--border-thick);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-md);
+}
+
+.danger-confirm-text {
+    font-family: var(--font-label);
+    font-size: var(--font-size-lg);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--black);
+    margin: 0 0 var(--space-sm);
+}
+
+.danger-form {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    margin: 0;
+}
+
+/* Bottone di conferma: invertito (nero su bianco) per distinguersi
+   dallo sfondo rosa del box e restare nel linguaggio brutalista. */
+.danger-step-2 .btn-danger {
+    background: var(--black);
+    color: var(--white);
+    box-shadow: 5px 5px 0 var(--white);
+}
+
+.danger-step-2 .btn-danger:hover {
+    background: var(--white);
+    color: var(--black);
+    box-shadow: 9px 9px 0 var(--black);
+}
+
+/* "Annulla": stesso for della checkbox, la deseleziona e torna al passo 1. */
+.btn-cancel {
+    font-family: var(--font-label);
+    font-size: var(--font-size-base);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--white);
+    border: var(--border-thick);
+    box-shadow: 5px 5px 0 var(--black);
+    padding: var(--space-sm) var(--space-md);
+    cursor: var(--cursor-pointer), pointer;
+    transition: var(--transition-snap);
+}
+
+.btn-cancel:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 var(--black);
+}

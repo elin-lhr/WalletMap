@@ -10,7 +10,7 @@
     {# ── Colonna sinistra: form nuova lista ── #}
     <div class="stat-card" style="background: var(--cyan); text-align: left;">
         <h2 style="margin-bottom: 16px; font-size: 1.4rem;">Nuova Lista</h2>
-        <form action="/lista-spesa" method="POST" novalidate>
+        <form action="{{ url_for('lista_spesa') }}" method="POST" novalidate>
             {{ form.hidden_tag() }}
 
             <div class="field" style="margin-bottom: 16px;">
@@ -75,7 +75,7 @@
                 {% endif %}
 
                 {# Elimina #}
-                <form action="/lista-spesa/elimina/{{ lista.id }}" method="POST" style="text-align: right;">
+                <form action="{{ url_for('elimina_lista', id=lista.id) }}" method="POST" style="text-align: right;">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="btn-danger" style="font-size: 13px; padding: 4px 12px;">Elimina</button>
                 </form>

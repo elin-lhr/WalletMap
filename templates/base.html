@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}WalletMap{% endblock %}</title>
     {# Ordine: token → foglio di stile (reset + base + componenti) #}
-    <link rel="stylesheet" href="/static/css/variables.css">
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block head %}{% endblock %}
 </head>
 <body>
@@ -14,14 +14,14 @@
         <div class="navbar-brand">WalletMap</div>
         <ul class="navbar-links">
             {% if current_user %}
-                <li><a href="/dashboard">Dashboard</a></li>
-                <li><a href="/registro">Registro</a></li>
-                <li><a href="/budget">Budget</a></li>
-                <li><a href="/abbonamenti">Abbonamenti</a></li>
-                <li><a href="/lista-spesa">Lista Spesa</a></li>
-                <li><a href="/profile" class="nav-user">{{ current_user.username }}</a></li>
+                <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('registro') }}">Registro</a></li>
+                <li><a href="{{ url_for('budget') }}">Budget</a></li>
+                <li><a href="{{ url_for('abbonamenti') }}">Abbonamenti</a></li>
+                <li><a href="{{ url_for('lista_spesa') }}">Lista Spesa</a></li>
+                <li><a href="{{ url_for('profile') }}" class="nav-user">{{ current_user.username }}</a></li>
             {% else %}
-                <li><a href="/login">Login</a></li>
+                <li><a href="{{ url_for('login') }}">Login</a></li>
             {% endif %}
         </ul>
     </nav>
@@ -43,6 +43,20 @@
     <footer class="footer">
         <p>&copy; {{ current_year }} WalletMap</p>
     </footer>
+
+    {# Banner cookie GDPR: visibile finché l'utente non accetta.
+       Mostrato se non c'è consenso in sessione E (anonimo o User senza consenso). #}
+    {% if session.get('cookie_consent') is not true
+          and (current_user is none or current_user.cookie_consent is not true) %}
+    <div class="cookie-banner">
+        <p>Questo sito usa cookie tecnici per il funzionamento.
+           Continuando accetti il trattamento dei dati.</p>
+        <form action="{{ url_for('cookie_consent') }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn-primary">Accetta</button>
+        </form>
+    </div>
+    {% endif %}
 
 </body>
 </html>
