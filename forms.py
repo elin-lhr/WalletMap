@@ -33,6 +33,16 @@ class RegisterForm(FlaskForm):
     submit = SubmitField('Registrati')
 
 
+class CambioPasswordForm(FlaskForm):
+    password_attuale = PasswordField('Password attuale', validators=[DataRequired()])
+    nuova_password = PasswordField('Nuova password', validators=[DataRequired(), Length(min=6)])
+    conferma_password = PasswordField(
+        'Conferma nuova password',
+        validators=[DataRequired(), EqualTo('nuova_password', message='Le password non corrispondono')]
+    )
+    submit = SubmitField('Cambia password')
+
+
 class SpesaForm(FlaskForm):
     importo = FloatField('Importo (€)', validators=[DataRequired()])
     categoria = SelectField('Categoria', choices=CATEGORIE, validators=[DataRequired()])
@@ -43,6 +53,14 @@ class SpesaForm(FlaskForm):
         choices=[('uscita', 'Uscita'), ('entrata', 'Entrata')],
         validators=[DataRequired()]
     )
+    valuta = SelectField('Valuta', choices=[
+        ('EUR', '€ Euro'),
+        ('USD', '$ Dollaro USA'),
+        ('GBP', '£ Sterlina'),
+        ('CNY', '¥ Yuan cinese'),
+        ('AUD', 'A$ Dollaro australiano'),
+        ('KRW', '₩ Won coreano'),
+    ], default='EUR')
     submit = SubmitField('Salva')
 
 

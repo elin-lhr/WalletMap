@@ -5,6 +5,16 @@
 {% block content %}
 <h1>Registro Spese</h1>
 
+{# Simboli valuta per il badge "importo originale" nella tabella #}
+{% set simboli = {
+    'EUR': '€',
+    'USD': '$',
+    'GBP': '£',
+    'CNY': '¥',
+    'AUD': 'A$',
+    'KRW': '₩'
+} %}
+
 {# ── Summary bar ── #}
 <div class="profile-stats" style="margin-bottom: 40px;">
     <div class="stat-card" style="background: var(--lime);">
@@ -40,6 +50,14 @@
                 {{ form.importo.label }}
                 {{ form.importo(class='input-field', style='width: 100%; box-sizing: border-box;', placeholder='0.00') }}
                 {% for error in form.importo.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="field" style="margin-bottom: 14px;">
+                {{ form.valuta.label }}
+                {{ form.valuta(class='input-field', style='width: 100%; box-sizing: border-box;') }}
+                {% for error in form.valuta.errors %}
                     <span class="error">{{ error }}</span>
                 {% endfor %}
             </div>
@@ -100,7 +118,14 @@
                     <td style="padding: 12px 16px; font-family: 'Space Grotesk', sans-serif; font-weight: 700;">{{ spesa.data.strftime('%d/%m/%Y') }}</td>
                     <td style="padding: 12px 16px; font-family: 'Space Grotesk', sans-serif; font-weight: 700;">{{ spesa.categoria }}</td>
                     <td style="padding: 12px 16px; font-family: 'Space Grotesk', sans-serif; font-weight: 500;">{{ spesa.nota or '—' }}</td>
-                    <td style="padding: 12px 16px; text-align: right; font-family: 'Archivo Black', sans-serif; letter-spacing: -0.5px;">€ {{ "%.2f"|format(spesa.importo) }}</td>
+                    <td style="padding: 12px 16px; text-align: right; font-family: 'Archivo Black', sans-serif; letter-spacing: -0.5px;">
+                        € {{ "%.2f"|format(spesa.importo) }}
+                        {% if spesa.valuta != 'EUR' and spesa.importo_originale %}
+                        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; font-weight: 700; opacity: 0.6; letter-spacing: 0; margin-top: 4px;">
+                            (originale: {{ "%.2f"|format(spesa.importo_originale) }} {{ simboli.get(spesa.valuta, spesa.valuta) }})
+                        </div>
+                        {% endif %}
+                    </td>
                     <td style="padding: 12px 16px; text-align: center;">
                         {% if spesa.tipo == 'entrata' %}
                             <span style="background: var(--lime); border: 2px solid var(--black); padding: 3px 10px; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 0.9rem; text-transform: uppercase; display: inline-block;">Entrata</span>

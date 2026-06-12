@@ -11,9 +11,9 @@ from openpyxl.styles import Font
 from flask import Flask, render_template, request, redirect, url_for, flash, session, make_response
 from flask_wtf.csrf import CSRFProtect
 from models import db, User, Spesa, Budget, Abbonamento, ListaSpesa
-from forms import LoginForm, RegisterForm, SpesaForm, BudgetForm, AbbonamentoForm, ListaSpesaForm
+from forms import LoginForm, RegisterForm, SpesaForm, BudgetForm, AbbonamentoForm, ListaSpesaForm, CambioPasswordForm
 from config import config_map
-from services import stima_prezzi
+from services import stima_prezzi, get_tasso_cambio
 
 app = Flask(__name__)
 env = os.environ.get('FLASK_ENV', 'development')
@@ -168,6 +168,24 @@ def delete_account():
     return redirect(url_for('index'))
 
 
+@app.route('/cambia-password', methods=['GET', 'POST'])
+@login_required
+def cambia_password():
+    form = CambioPasswordForm()
+    if form.validate_on_submit():
+        user = db.session.get(User, session['user_id'])
+        if not user.check_password(form.password_attuale.data):
+            flash('Password attuale errata', 'error')
+            return render_template('cambia_password.html', form=form)
+
+        user.set_password(form.nuova_password.data)
+        db.session.commit()
+        flash('Password cambiata con successo!', 'success')
+        return redirect(url_for('profile'))
+
+    return render_template('cambia_password.html', form=form)
+
+
 # ========== WalletMap Routes ==========
 
 @app.route('/dashboard', methods=['GET', 'POST'])
@@ -246,12 +264,29 @@ def dashboard():
 def registro():
     form = SpesaForm()
     if form.validate_on_submit():
+        valuta = form.valuta.data
+        if valuta != 'EUR':
+            tasso = get_tasso_cambio(valuta)
+            if tasso is None:
+                flash('Tasso di cambio non disponibile. Spesa salvata in EUR.', 'error')
+                importo_eur = form.importo.data
+                importo_originale = None
+                valuta = 'EUR'
+            else:
+                importo_originale = form.importo.data
+                importo_eur = round(form.importo.data / tasso, 2)
+        else:
+            importo_eur = form.importo.data
+            importo_originale = None
+
         spesa = Spesa(
-            importo=form.importo.data,
+            importo=importo_eur,
             categoria=form.categoria.data,
             data=form.data.data,
             nota=form.nota.data,
             tipo=form.tipo.data,
+            valuta=valuta,
+            importo_originale=importo_originale,
             user_id=session['user_id'],
         )
         db.session.add(spesa)

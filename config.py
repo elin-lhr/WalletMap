@@ -10,6 +10,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {'pool_pre_ping': True}
     GROQ_API_KEY = os.environ.get('GROQ_API_KEY', '')
+    EXCHANGERATE_API_KEY = os.environ.get('EXCHANGERATE_API_KEY', '')
 
 
 class DevelopmentConfig(Config):

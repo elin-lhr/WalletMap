@@ -2,6 +2,8 @@ from __future__ import annotations  # consente 'dict | None' anche su Python 3.9
 
 import os
 import json
+import requests
+from flask import current_app
 from groq import Groq
 
 
@@ -36,4 +38,23 @@ def stima_prezzi(prodotti: list[str]) -> dict | None:
         return {'prodotti': prodotti_out, 'totale': totale}
     except Exception:
         # Errore di rete/timeout/risposta non valida: il chiamante gestisce None.
+        return None
+
+
+def get_tasso_cambio(valuta: str) -> float | None:
+    # EUR è la valuta base: nessuna chiamata API necessaria.
+    if valuta == 'EUR':
+        return 1.0
+
+    api_key = current_app.config.get('EXCHANGERATE_API_KEY', '')
+    url = f'https://v6.exchangerate-api.com/v6/{api_key}/latest/EUR'
+
+    try:
+        resp = requests.get(url, timeout=5)
+        resp.raise_for_status()
+        data = resp.json()
+        # Tasso EUR -> valuta richiesta (es. 1 EUR = 1.08 USD).
+        return float(data['conversion_rates'][valuta])
+    except Exception:
+        # Timeout/ConnectionError/HTTPError/KeyError: il chiamante gestisce None.
         return None

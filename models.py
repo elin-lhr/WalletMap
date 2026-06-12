@@ -33,6 +33,8 @@ class Spesa(db.Model):
     data = db.Column(db.Date, nullable=False)
     nota = db.Column(db.String(200))
     tipo = db.Column(db.String(10), nullable=False)  # 'entrata' o 'uscita'
+    valuta = db.Column(db.String(3), default='EUR', nullable=False)
+    importo_originale = db.Column(db.Float, nullable=True)  # importo nella valuta originale (None se EUR)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 

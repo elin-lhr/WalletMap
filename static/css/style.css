@@ -1716,7 +1716,10 @@ a:hover {
 
 .profile-actions {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
 }
 
 .btn-logout {
@@ -2633,8 +2636,11 @@ a:hover {
     z-index: 9999;
     background: var(--black);
     color: var(--white);
-    padding: var(--space-md);
-    border-top: var(--border-thick);
+    padding: var(--space-md) var(--space-lg);
+    /* Bordo forte come la navbar + filo giallo (accento primario) sopra:
+       doppio bordo brutalista che stacca il banner dalla pagina. */
+    border-top: var(--border-extra);
+    box-shadow: 0 -6px 0 var(--yellow);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -2644,8 +2650,13 @@ a:hover {
 
 .cookie-banner p {
     margin: 0;
+    /* Forza il bianco: serve a battere la regola globale `p { color: var(--black) }`,
+       altrimenti il testo risulterebbe nero su sfondo nero (illeggibile). */
+    color: var(--white);
     font-family: var(--font-body);
     font-size: var(--font-size-sm);
+    font-weight: 500;
+    line-height: 1.45;
     flex: 1;
     min-width: 220px;
 }
