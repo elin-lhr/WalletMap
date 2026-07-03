@@ -73,14 +73,17 @@ def index():
 @app.route('/cookie-consent', methods=['POST'])
 def cookie_consent():
     # Funziona anche per utenti anonimi: nessun @login_required.
-    user_id = session.get('user_id')
-    if user_id:
-        user = db.session.get(User, user_id)
-        if user:
-            user.cookie_consent = True
-            db.session.commit()
-    # Salva sempre il consenso in sessione: copre anche gli utenti non loggati.
-    session['cookie_consent'] = True
+    scelta = request.form.get('scelta', 'accetta')
+    # Registra la scelta in sessione: dismette il banner sia su accetta sia su rifiuta.
+    session['cookie_choice'] = scelta
+    if scelta == 'accetta':
+        session['cookie_consent'] = True
+        user_id = session.get('user_id')
+        if user_id:
+            user = db.session.get(User, user_id)
+            if user:
+                user.cookie_consent = True
+                db.session.commit()
     return redirect(request.referrer or url_for('index'))
 
 

@@ -421,7 +421,28 @@
         }
     }
 
+    /* ---------- MENU HAMBURGER (mobile) ---------- */
+    function initNavToggle() {
+        var btn = document.querySelector('[data-nav-toggle]');
+        if (!btn) return;
+        var navbar = btn.closest('.navbar');
+        if (!navbar) return;
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var open = navbar.classList.toggle('nav-open');
+            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+        // Tap fuori dalla navbar: chiude il menu
+        document.addEventListener('click', function (e) {
+            if (navbar.classList.contains('nav-open') && !navbar.contains(e.target)) {
+                navbar.classList.remove('nav-open');
+                btn.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
+
     function init() {
+        initNavToggle();
         var selects = document.querySelectorAll('select.input-field');
         for (var i = 0; i < selects.length; i++) initSelect(selects[i]);
 

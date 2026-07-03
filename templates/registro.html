@@ -38,7 +38,7 @@
 </div>
 
 {# ── Two-column layout: form (1fr) + table (2fr) ── #}
-<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 32px; align-items: start;">
+<div class="responsive-cols" style="display: grid; grid-template-columns: 1fr 2fr; gap: 32px; align-items: start;">
 
     {# LEFT — Add new spesa #}
     <div class="stat-card" style="background: var(--cyan); text-align: left;">
@@ -101,7 +101,7 @@
     {# RIGHT — Spese table #}
     <div>
         {% if spese %}
-        <table style="width: 100%; border-collapse: collapse; border: var(--border-thick); box-shadow: var(--shadow-brutal);">
+        <table class="spese-table" style="width: 100%; border-collapse: collapse; border: var(--border-thick); box-shadow: var(--shadow-brutal);">
             <thead>
                 <tr style="background: var(--black); color: var(--white);">
                     <th style="padding: 14px 16px; text-align: left; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 1rem; font-weight: 400;">Data</th>
@@ -115,10 +115,10 @@
             <tbody>
                 {% for spesa in spese %}
                 <tr style="background: {% if loop.index is odd %}var(--white){% else %}var(--cyan){% endif %}; border-bottom: 2px solid var(--black);">
-                    <td style="padding: 12px 16px; font-family: 'Space Grotesk', sans-serif; font-weight: 700;">{{ spesa.data.strftime('%d/%m/%Y') }}</td>
-                    <td style="padding: 12px 16px; font-family: 'Space Grotesk', sans-serif; font-weight: 700;">{{ spesa.categoria }}</td>
-                    <td style="padding: 12px 16px; font-family: 'Space Grotesk', sans-serif; font-weight: 500;">{{ spesa.nota or '—' }}</td>
-                    <td style="padding: 12px 16px; text-align: right; font-family: 'Archivo Black', sans-serif; letter-spacing: -0.5px;">
+                    <td data-label="Data" style="padding: 12px 16px; font-family: 'Space Grotesk', sans-serif; font-weight: 700;">{{ spesa.data.strftime('%d/%m/%Y') }}</td>
+                    <td data-label="Categoria" style="padding: 12px 16px; font-family: 'Space Grotesk', sans-serif; font-weight: 700;">{{ spesa.categoria }}</td>
+                    <td data-label="Nota" style="padding: 12px 16px; font-family: 'Space Grotesk', sans-serif; font-weight: 500;">{{ spesa.nota or '—' }}</td>
+                    <td data-label="Importo" style="padding: 12px 16px; text-align: right; font-family: 'Archivo Black', sans-serif; letter-spacing: -0.5px;">
                         € {{ "%.2f"|format(spesa.importo) }}
                         {% if spesa.valuta != 'EUR' and spesa.importo_originale %}
                         <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; font-weight: 700; opacity: 0.6; letter-spacing: 0; margin-top: 4px;">
@@ -126,14 +126,14 @@
                         </div>
                         {% endif %}
                     </td>
-                    <td style="padding: 12px 16px; text-align: center;">
+                    <td data-label="Tipo" style="padding: 12px 16px; text-align: center;">
                         {% if spesa.tipo == 'entrata' %}
                             <span style="background: var(--lime); border: 2px solid var(--black); padding: 3px 10px; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 0.9rem; text-transform: uppercase; display: inline-block;">Entrata</span>
                         {% else %}
                             <span style="background: var(--pink); border: 2px solid var(--black); padding: 3px 10px; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 0.9rem; text-transform: uppercase; display: inline-block;">Uscita</span>
                         {% endif %}
                     </td>
-                    <td style="padding: 12px 16px; text-align: center;">
+                    <td data-label="Azione" style="padding: 12px 16px; text-align: center;">
                         <form action="{{ url_for('elimina_spesa', id=spesa.id) }}" method="POST">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <button type="submit" class="btn-danger" style="font-size: 13px; padding: 4px 12px;">Elimina</button>

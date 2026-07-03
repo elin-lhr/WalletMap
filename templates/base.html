@@ -12,6 +12,9 @@
 <body>
     <nav class="navbar">
         <a href="{{ url_for('dashboard') if current_user else url_for('index') }}" class="navbar-brand">WalletMap</a>
+        <button type="button" class="navbar-toggle" data-nav-toggle aria-label="Apri menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
         <ul class="navbar-links">
             {% if current_user %}
                 <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
@@ -58,17 +61,16 @@
 
     {# Banner cookie GDPR: visibile finché l'utente non accetta.
        Mostrato se non c'è consenso in sessione E (anonimo o User senza consenso). #}
-    {% if session.get('cookie_consent') is not true
+    {% if session.get('cookie_choice') is none
           and (current_user is none or current_user.cookie_consent is not true) %}
     <div class="cookie-banner">
         <p><span class="cookie-emoji">🍪</span> Usiamo solo cookie tecnici per far funzionare il sito.</p>
-        <div class="cookie-actions">
-            <form action="{{ url_for('cookie_consent') }}" method="POST">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="btn-primary cookie-accept">Accetta</button>
-            </form>
+        <form action="{{ url_for('cookie_consent') }}" method="POST" class="cookie-actions">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" name="scelta" value="accetta" class="btn-primary cookie-accept">Accetta</button>
+            <button type="submit" name="scelta" value="rifiuta" class="cookie-refuse">Rifiuta</button>
             <a href="{{ url_for('cookie_policy') }}" class="cookie-link">Cookie Policy</a>
-        </div>
+        </form>
     </div>
     {% endif %}
 
