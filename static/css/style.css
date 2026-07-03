@@ -197,17 +197,24 @@ a:hover {
 }
 
 .navbar-brand {
+    display: inline-block;
     font-family: 'Archivo Black', sans-serif;
     font-size: 32px;
     font-weight: 900;
     letter-spacing: -2px;
     text-transform: uppercase;
     color: var(--white);
+    text-decoration: none;
     position: relative;
     padding: 0 16px;
     border: 3px solid var(--white);
     transform: skewX(-6deg);
     animation: glitchBrand 6s steps(2) infinite;
+}
+
+.navbar-brand:hover {
+    background: var(--yellow);
+    color: var(--black);
 }
 
 @keyframes glitchBrand {
@@ -246,6 +253,13 @@ a:hover {
     border-left: none;
 }
 
+/* Chip utente staccato dai link: evita che l'hover (scale) dei link
+   ci sconfini sopra. */
+.navbar-links li:last-child {
+    margin-left: 14px;
+    border-left: none;
+}
+
 .navbar-links a {
     color: var(--white);
     text-decoration: none;
@@ -260,6 +274,7 @@ a:hover {
     background: var(--yellow);
     color: var(--black);
     transform: scale(1.05) skewX(-4deg);
+    z-index: 2;
 }
 
 @media (max-width: 768px) {
@@ -348,12 +363,7 @@ a:hover {
 .footer {
     background: var(--black);
     color: var(--white);
-    text-align: left;
-    padding: 32px 40px;
-    font-family: 'Archivo Black', sans-serif;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 4px;
+    padding: 0;
     margin-top: 100px;
     border-top: var(--border-extra);
     position: relative;
@@ -361,116 +371,433 @@ a:hover {
     overflow: hidden;
 }
 
-.footer::before {
-    content: '////////////';
-    position: absolute;
-    top: 50%;
-    right: 40px;
-    transform: translateY(-50%);
-    font-size: 24px;
-    letter-spacing: 0;
+/* Striscia decorativa di 4 blocchi colorati in cima al footer */
+.footer-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    height: 12px;
 }
+.footer-strip span:nth-child(1) { background: var(--yellow); }
+.footer-strip span:nth-child(2) { background: var(--pink); }
+.footer-strip span:nth-child(3) { background: var(--cyan); }
+.footer-strip span:nth-child(4) { background: var(--lime); }
 
-.footer p {
-    color: var(--white);
-    position: relative;
-    z-index: 1;
-}
-
-/* ===== FOOTER: SOTTO-COMPONENTI ================================
-   Classi additive per strutturare il contenuto del footer.
-   Il .footer base (sfondo nero, bordo, padding, margin-top 100px)
-   non viene modificato: è già conforme al design system.
-
-   Token inesistenti rimappati:
-     --color-dark              → var(--black)  (già usato da .footer)
-     rgba(255,255,255,0.7)     → var(--white)  (DS: bianco carta pieno)
-     font-weight: bold         → 900           (DS: massimalista)
-     --transition              → var(--transition-snap)
-     hover color white         → var(--yellow) (DS: accento su sfondo nero)
-     border-top 1px rgba(…)   → 2px dashed rgba(255,250,235,0.2)
-                                 (DS usa tratteggiato; 1px solid non esiste) */
-
-/* Wrapper interno centrato */
-.footer-content {
+/* Barra minimale: brand a sinistra, copyright + link legali a destra */
+.footer-bar {
     max-width: 1100px;
     margin: 0 auto;
+    padding: 26px 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: var(--space-md);
-    position: relative;
-    z-index: 1;
 }
 
-/* Logo / brand nel footer */
+/* ===== FOOTER: SOTTO-COMPONENTI ================================
+   Footer minimale: brand WalletMap, copyright e link legali,
+   sotto la striscia colorata e il bordo nero. */
+
 .footer-brand {
+    display: inline-block;
     font-family: var(--font-display);
-    font-size: var(--font-size-lg);
-    font-weight: 900;
+    font-size: 24px;
     color: var(--white);
     text-transform: uppercase;
     letter-spacing: -0.5px;
     text-decoration: none;
 }
-
 .footer-brand:hover {
     color: var(--yellow);
     background: transparent;
 }
 
-/* Lista link orizzontale */
-.footer-links {
+/* Copyright + link legali */
+.footer-legal {
     display: flex;
-    gap: var(--space-lg);
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    align-items: center;
     flex-wrap: wrap;
-}
-
-.footer-links a {
+    gap: var(--space-md);
     font-family: var(--font-label);
-    font-size: var(--font-size-sm);
-    font-weight: 700;
+    font-size: 14px;
     letter-spacing: 2px;
     text-transform: uppercase;
+    color: var(--white);
+}
+.footer-legal a {
     color: var(--white);
     text-decoration: none;
     transition: color var(--transition-snap);
 }
-
-.footer-links a:hover {
+.footer-legal a:hover {
     color: var(--yellow);
     background: transparent;
 }
 
-/* Riga copyright in fondo */
-.footer-copy {
-    font-family: var(--font-label);
-    font-size: var(--font-size-sm);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--white);
-    text-align: center;
-    margin-top: var(--space-md);
-    padding-top: var(--space-md);
-    border-top: 2px dashed rgba(255, 250, 235, 0.2);
-    position: relative;
-    z-index: 1;
-    width: 100%;
-}
-
-/* Mobile ≤ 640px: colonna centrata */
+/* Mobile ≤ 640px: barra impilata e centrata */
 @media (max-width: 640px) {
-    .footer-content {
+    .footer-bar {
         flex-direction: column;
         text-align: center;
+        padding: 24px;
+        gap: var(--space-md);
     }
-    .footer-links {
+    .footer-legal {
         justify-content: center;
     }
+}
+
+/* ===== PAGINE LEGALI (Privacy, Cookie Policy) ===================== */
+.legal {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: var(--space-xl) 0;
+}
+.legal h1 {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 5vw, 52px);
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    line-height: 0.95;
+    margin-bottom: 10px;
+}
+.legal-updated {
+    display: inline-block;
+    font-family: var(--font-label);
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: var(--yellow);
+    border: 3px solid var(--black);
+    padding: 3px 10px;
+    margin-bottom: 28px;
+}
+.legal h2 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+    margin: 34px 0 12px;
+}
+.legal p,
+.legal li {
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--black);
+}
+.legal ul {
+    margin: 0 0 8px;
+    padding-left: 22px;
+}
+.legal li { margin-bottom: 8px; }
+.legal a {
+    color: var(--black);
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+}
+.legal a:hover { background: var(--yellow); }
+.legal code {
+    font-family: monospace;
+    font-size: 15px;
+    background: var(--black);
+    color: var(--lime);
+    padding: 1px 6px;
+}
+.legal-note {
+    margin-top: 32px;
+    padding: 14px 18px;
+    background: var(--white);
+    border: var(--border-thick);
+    box-shadow: var(--shadow-sm);
+    font-size: 15px;
+    opacity: 0.85;
+}
+
+/* ===== BARRE ANDAMENTO CLICCABILI + POP-UP DETTAGLIO ============== */
+.chart-bar {
+    cursor: var(--cursor-pointer), pointer;
+    transition: var(--transition-snap);
+}
+/* Ring interno bianco su hover/focus (non tagliato dal contenitore) */
+.chart-bar:hover,
+.chart-bar:focus-visible {
+    box-shadow: inset 0 0 0 4px var(--white);
+    outline: none;
+}
+
+/* Overlay a schermo intero. Nomi con prefisso detail- per NON collidere
+   col sistema modale esistente (.modal-overlay/.modal-box di elimina account). */
+.detail-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(10, 10, 10, 0.6);
+    padding: 20px;
+    align-items: center;
+    justify-content: center;
+}
+.detail-overlay.is-open { display: flex; }
+
+/* Riquadro del pop-up */
+.detail-modal {
+    width: 100%;
+    max-width: 460px;
+    max-height: 82vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--white);
+    border: var(--border-extra);
+    box-shadow: var(--shadow-brutal-lg);
+    animation: detailModalPop 0.15s steps(2) both;
+}
+@keyframes detailModalPop {
+    0% { transform: translate(-6px, -6px); }
+    100% { transform: translate(0, 0); }
+}
+
+.detail-head {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 20px;
+    border-bottom: var(--border-thick);
+}
+.detail-modal-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+    color: var(--black);
+}
+.detail-close {
+    flex-shrink: 0;
+    font-family: var(--font-display);
+    font-size: 15px;
+    line-height: 1;
+    width: 34px;
+    height: 34px;
+    color: var(--black);
+    background: var(--white);
+    border: 3px solid var(--black);
+    cursor: var(--cursor-pointer), pointer;
+    transition: var(--transition-snap);
+}
+.detail-close:hover { background: var(--black); color: var(--white); }
+
+.detail-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 18px 20px 22px;
+}
+.detail-total {
+    font-family: var(--font-label);
+    font-size: 16px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--black);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px dashed rgba(10, 10, 10, 0.25);
+}
+
+.detail-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.detail-row {
+    padding: 10px 14px;
+    background: var(--white);
+    border: 3px solid var(--black);
+}
+.detail-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+}
+.detail-cat {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--black);
+}
+.detail-amount {
+    font-family: var(--font-display);
+    font-size: 16px;
+    letter-spacing: -0.5px;
+    color: var(--black);
+    white-space: nowrap;
+}
+.detail-sub {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 700;
+    opacity: 0.6;
+}
+.detail-note { font-style: italic; }
+
+/* ===== MODIFICA LISTA SPESA (dentro il pop-up) =================== */
+.detail-modal-wide { max-width: 560px; }
+
+.lista-edit-label {
+    display: block;
+    font-family: var(--font-label);
+    font-size: 15px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--black);
+    margin: 14px 0 6px;
+}
+.lista-edit-label:first-child { margin-top: 0; }
+
+.lista-input {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--black);
+    background: var(--white);
+    border: 3px solid var(--black);
+    padding: 8px 10px;
+    outline: none;
+    box-sizing: border-box;
+    transition: var(--transition-snap);
+}
+.lista-input:focus { background: var(--yellow); }
+.lista-edit-nome { width: 100%; }
+
+.lista-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.lista-row { display: flex; gap: 8px; align-items: stretch; }
+.lista-name { flex: 1; min-width: 0; }
+.lista-price { width: 88px; text-align: right; flex-shrink: 0; }
+.lista-row-del {
+    flex-shrink: 0;
+    width: 38px;
+    font-family: var(--font-display);
+    font-size: 13px;
+    line-height: 1;
+    color: var(--black);
+    background: var(--pink);
+    border: 3px solid var(--black);
+    cursor: var(--cursor-pointer), pointer;
+    transition: var(--transition-snap);
+}
+.lista-row-del:hover { background: var(--black); color: var(--white); }
+
+.lista-edit-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 2px dashed rgba(10, 10, 10, 0.25);
+}
+.lista-edit-actions button { font-size: 14px; padding: 8px 16px; }
+
+/* Bottone "Modifica": outline con sfondo bianco (mai giallo), hover cyan.
+   Selettore a doppia classe per vincere su .btn-outline a prescindere
+   dall'ordine nel file (stessa specificità → altrimenti vincerebbe il più in basso). */
+.btn-outline.btn-edit { background: var(--white); }
+.btn-outline.btn-edit:hover { background: var(--cyan); }
+
+/* ===== LOGIN: occhiolino password + "Ricordami" ================== */
+.password-wrap { position: relative; display: flex; }
+.password-wrap input {
+    flex: 1;
+    min-width: 0;
+    padding-right: 54px;   /* spazio per l'occhiolino */
+}
+/* Niente shift sul focus: l'occhiolino resta allineato all'input */
+.password-wrap input:focus { transform: none; }
+
+.password-toggle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--black);
+    background: transparent;
+    border: none;
+    border-left: var(--border-thick);
+    cursor: var(--cursor-pointer), pointer;
+    transition: var(--transition-snap);
+}
+.password-toggle:hover { background: var(--yellow); }
+
+/* Icone occhio (SVG a linea, monocromatiche) */
+.password-toggle .eye {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.password-toggle .eye-off { display: none; }
+.password-toggle.is-on .eye-open { display: none; }
+.password-toggle.is-on .eye-off { display: block; }
+
+/* Riga "Ricordami" con checkbox brutalista */
+.remember-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 2px;
+}
+.remember-row input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border: var(--border-thick);
+    background: var(--white);
+    cursor: var(--cursor-pointer), pointer;
+    display: grid;
+    place-content: center;
+    transition: var(--transition-snap);
+}
+.remember-row input[type="checkbox"]:checked { background: var(--lime); }
+.remember-row input[type="checkbox"]:checked::before {
+    content: '\2713';
+    font-family: var(--font-display);
+    font-size: 15px;
+    line-height: 1;
+    color: var(--black);
+}
+.remember-row label {
+    font-family: var(--font-label);
+    font-size: 16px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--black);
+    cursor: var(--cursor-pointer), pointer;
+    margin: 0;
 }
 
 /* ========== DASHBOARD LAYOUT ========== */
@@ -806,8 +1133,15 @@ a:hover {
     box-shadow: 2px 2px 0 var(--black);
 }
 
-/* .btn-success — lime: il verde del design system brutalista */
+/* .btn-success — lime: il verde del design system brutalista.
+   Include la tipografia (come .btn / .btn-danger) così è coerente anche
+   quando usato da solo, senza la classe .btn accanto. */
 .btn-success {
+    font-family: var(--font-display);
+    font-size: var(--font-size-base);
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
     background: var(--lime);
     color: var(--black);
     border: var(--border-thick);
@@ -829,6 +1163,11 @@ a:hover {
 
 /* .btn-outline — trasparente con bordo; hover: inversione nero/giallo */
 .btn-outline {
+    font-family: var(--font-display);
+    font-size: var(--font-size-base);
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
     background: transparent;
     color: var(--black);
     border: var(--border-thick);
@@ -1939,6 +2278,197 @@ a:hover {
     box-shadow: 9px 9px 0 var(--pink);
 }
 
+/* ===== SELECT & DATE — coerenza col design system brutalista =========
+   I <select> e gli <input type="date"> nativi mostrano chrome del browser
+   (freccia grigia, icona calendario) che stona con lo stile del sito.
+   Rimuoviamo l'aspetto nativo e ricostruiamo i controlli in chiave
+   brutalista, riusando i token .input-field già esistenti. */
+
+select.input-field,
+input[type="date"].input-field {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: var(--cursor-pointer), pointer;
+}
+
+/* Freccia custom (triangolo nero pieno) per i menu a tendina */
+select.input-field {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><polygon points='4,7 20,7 12,19' fill='%230A0A0A'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 18px center;
+    background-size: 22px;
+    padding-right: 56px;   /* spazio per non sovrapporre il testo alla freccia */
+}
+
+/* .input-field:focus usa lo shorthand `background`, che azzererebbe la
+   freccia: la reimpostiamo qui (selettore elemento+classe = più specifico). */
+select.input-field:focus {
+    background-color: var(--yellow);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><polygon points='4,7 20,7 12,19' fill='%230A0A0A'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 18px center;
+    background-size: 22px;
+}
+
+/* Icona calendario del date input: chip giallo brutalista con bordo nero */
+input[type="date"].input-field::-webkit-calendar-picker-indicator {
+    cursor: var(--cursor-pointer), pointer;
+    width: 18px;
+    height: 18px;
+    padding: 3px;
+    margin-left: 8px;
+    background-color: var(--yellow);
+    border: 2px solid var(--black);
+    transition: var(--transition-snap);
+}
+
+input[type="date"].input-field::-webkit-calendar-picker-indicator:hover {
+    background-color: var(--pink);
+}
+
+/* ===== WIDGET CUSTOM: SELECT & DATE PICKER (JS) =====================
+   Stili dei componenti generati da static/js/ui.js. I controlli nativi
+   restano nel DOM con la classe .cs-native (nascosti) e continuano a
+   gestire l'invio del form; qui costruiamo l'aspetto brutalista. */
+
+.cs { position: relative; }
+
+/* Controllo nativo nascosto ma presente per il submit del form */
+.cs-native {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    border: 0;
+}
+
+/* Campo cliccabile: eredita .input-field, ma è un <button> in flex */
+.cs-trigger {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    text-align: left;
+}
+.cs-trigger:focus { transform: none; }   /* niente scatto: il pannello resta allineato */
+.cs.cs-open .cs-trigger { background: var(--yellow); }
+
+.cs-value {
+    flex: 1; min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.cs-trigger.is-placeholder .cs-value { opacity: 0.5; }
+
+/* Freccia del select */
+.cs-arrow {
+    flex-shrink: 0;
+    width: 22px; height: 22px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 22px;
+    transition: transform 0.15s;
+}
+.cs.cs-open .cs-arrow { transform: rotate(180deg); }
+
+/* Chip calendario del date field */
+.cs-cal-icon {
+    flex-shrink: 0;
+    font-size: 16px; line-height: 1;
+    background: var(--yellow);
+    border: 2px solid var(--black);
+    padding: 4px 5px;
+    transition: var(--transition-snap);
+}
+.cs.cs-open .cs-cal-icon { background: var(--pink); }
+
+/* Pannello a comparsa (comune a select e calendario) */
+.cs-panel {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 60;
+    min-width: 100%;
+    box-sizing: border-box;
+    background: var(--white);
+    border: var(--border-thick);
+    box-shadow: var(--shadow-brutal);
+}
+.cs.cs-open .cs-panel { display: block; }
+
+/* --- Lista opzioni del select --- */
+.cs-panel:not(.cs-cal) { max-height: 300px; overflow-y: auto; }
+.cs-option {
+    font-family: var(--font-body);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--black);
+    padding: 12px 18px;
+    border-bottom: 3px solid var(--black);
+    cursor: var(--cursor-pointer), pointer;
+}
+.cs-option:last-child { border-bottom: 0; }
+.cs-option:hover,
+.cs-option.is-active { background: var(--yellow); }
+.cs-option.is-selected { background: var(--lime); }
+.cs-option.is-selected::before { content: '\2713  '; font-weight: 900; }
+
+/* --- Calendario --- */
+.cs-cal { width: 300px; max-width: 84vw; padding: 14px; }
+.cs-cal-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px; margin-bottom: 12px;
+}
+.cs-cal-title {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: 15px; letter-spacing: -0.5px;
+}
+.cs-cal-nav {
+    font-family: var(--font-display);
+    font-size: 20px; line-height: 1;
+    width: 38px; height: 38px; flex-shrink: 0;
+    color: var(--black);
+    background: var(--yellow);
+    border: var(--border-thick);
+    box-shadow: var(--shadow-sm);
+    cursor: var(--cursor-pointer), pointer;
+    transition: var(--transition-snap);
+}
+.cs-cal-nav:hover { background: var(--pink); }
+.cs-cal-nav:active { transform: translate(2px, 2px); box-shadow: none; }
+
+.cs-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cs-cal-dow {
+    font-family: var(--font-label);
+    font-size: 14px; letter-spacing: 1px;
+    text-align: center;
+    padding: 4px 0 6px;
+}
+.cs-cal-day {
+    font-family: var(--font-body);
+    font-weight: 700; font-size: 15px;
+    aspect-ratio: 1 / 1;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--black);
+    background: var(--white);
+    border: 2px solid var(--black);
+    cursor: var(--cursor-pointer), pointer;
+    transition: var(--transition-snap);
+}
+.cs-cal-day.is-empty { border: 0; background: transparent; cursor: default; }
+.cs-cal-day:not(.is-empty):hover {
+    background: var(--yellow);
+    transform: translate(-1px, -1px);
+    box-shadow: 2px 2px 0 var(--black);
+}
+.cs-cal-day.is-today { background: var(--cyan); }
+.cs-cal-day.is-selected { background: var(--lime); }
+
 /* Messaggio di errore di validazione */
 .error {
     font-family: 'Bebas Neue', sans-serif;
@@ -2628,42 +3158,77 @@ a:hover {
    Fisso in fondo alla pagina, sopra ogni altro contenuto.
    Usa solo i token del design system (--black, --white, --space-md).
    ============================================================ */
+/* Post-it dei cookie: cartolina gialla flottante in basso a sinistra,
+   leggermente ruotata, con "nastro adesivo" rosa in cima (::before)
+   e ombra dura brutalista. */
 .cookie-banner {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 28px;
+    left: 50%;
     z-index: 9999;
-    background: var(--black);
-    color: var(--white);
-    padding: var(--space-md) var(--space-lg);
-    /* Bordo forte come la navbar + filo giallo (accento primario) sopra:
-       doppio bordo brutalista che stacca il banner dalla pagina. */
-    border-top: var(--border-extra);
-    box-shadow: 0 -6px 0 var(--yellow);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-md);
-    flex-wrap: wrap;
+    width: 400px;
+    max-width: calc(100vw - 40px);
+    background: var(--yellow);
+    color: var(--black);
+    border: var(--border-thick);
+    box-shadow: var(--shadow-brutal);
+    padding: 26px 22px 20px;
+    transform: translateX(-50%) rotate(-2deg);
+}
+
+/* Nastro adesivo rosa che "attacca" il post-it in alto */
+.cookie-banner::before {
+    content: '';
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    width: 112px;
+    height: 26px;
+    transform: translateX(-50%) rotate(-3deg);
+    background: var(--pink);
+    border: 3px solid var(--black);
+}
+
+.cookie-emoji {
+    font-size: 20px;
+    margin-right: 4px;
 }
 
 .cookie-banner p {
-    margin: 0;
-    /* Forza il bianco: serve a battere la regola globale `p { color: var(--black) }`,
-       altrimenti il testo risulterebbe nero su sfondo nero (illeggibile). */
-    color: var(--white);
+    margin: 0 0 16px;
+    /* Forza il nero: batte la regola globale p { color: ... } e resta leggibile sul giallo. */
+    color: var(--black);
     font-family: var(--font-body);
-    font-size: var(--font-size-sm);
-    font-weight: 500;
-    line-height: 1.45;
-    flex: 1;
-    min-width: 220px;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.4;
 }
 
-.cookie-banner form {
-    margin: 0;
-    flex-shrink: 0;
+.cookie-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+.cookie-banner form { margin: 0; }
+.cookie-banner .cookie-accept {
+    margin-top: 0;
+    font-size: 14px;
+    padding: 8px 20px;
+}
+
+.cookie-link {
+    font-family: var(--font-label);
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--black);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+}
+.cookie-link:hover {
+    background: var(--black);
+    color: var(--yellow);
 }
 
 /* ============================================================

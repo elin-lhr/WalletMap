@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -12,6 +13,13 @@ class Config:
     GROQ_API_KEY = os.environ.get('GROQ_API_KEY', '')
     EXCHANGERATE_API_KEY = os.environ.get('EXCHANGERATE_API_KEY', '')
 
+    # Sicurezza cookie di sessione
+    SESSION_COOKIE_HTTPONLY = True   # il cookie non è leggibile via JavaScript
+    SESSION_COOKIE_SAMESITE = 'Lax'  # mitigazione CSRF di base
+
+    # Durata della sessione "Ricordami" (quando session.permanent = True)
+    PERMANENT_SESSION_LIFETIME = timedelta(days=30)
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
@@ -19,6 +27,7 @@ class DevelopmentConfig(Config):
 
 class ProductionConfig(Config):
     DEBUG = False
+    SESSION_COOKIE_SECURE = True  # cookie inviato solo su HTTPS (attivo solo in prod)
     _db_url = os.environ.get('DATABASE_URL', '')
     SQLALCHEMY_DATABASE_URI = (
         _db_url.replace('postgres://', 'postgresql://', 1)

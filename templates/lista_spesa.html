@@ -72,11 +72,50 @@
                 </table>
                 {% endif %}
 
-                {# Elimina #}
-                <form action="{{ url_for('elimina_lista', id=lista.id) }}" method="POST" style="text-align: right;">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button type="submit" class="btn-danger" style="font-size: 13px; padding: 4px 12px;">Elimina</button>
-                </form>
+                {# Azioni: Modifica + Elimina #}
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn-outline btn-edit" style="font-size: 13px; padding: 4px 12px;" data-modal="edit-{{ lista.id }}">Modifica</button>
+                    <form action="{{ url_for('elimina_lista', id=lista.id) }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn-danger" style="font-size: 13px; padding: 4px 12px;">Elimina</button>
+                    </form>
+                </div>
+            </div>
+
+            {# ── Pop-up modifica lista ── #}
+            <div class="detail-overlay" id="edit-{{ lista.id }}" aria-hidden="true">
+                <div class="detail-modal detail-modal-wide" role="dialog" aria-modal="true" aria-label="Modifica {{ lista.nome }}">
+                    <div class="detail-head" style="background: var(--cyan);">
+                        <span class="detail-modal-title">Modifica lista</span>
+                        <button type="button" class="detail-close" data-close aria-label="Chiudi">✕</button>
+                    </div>
+                    <div class="detail-body">
+                        <form action="{{ url_for('modifica_lista', id=lista.id) }}" method="POST" class="lista-edit-form">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                            <label class="lista-edit-label">Nome lista</label>
+                            <input type="text" name="nome" class="lista-input lista-edit-nome" value="{{ lista.nome }}">
+
+                            <label class="lista-edit-label">Prodotti</label>
+                            <div class="lista-rows">
+                                {% for p in stima.prodotti %}
+                                <div class="lista-row">
+                                    <input type="text" name="nome_prodotto" class="lista-input lista-name" value="{{ p.nome }}" placeholder="Prodotto">
+                                    <input type="text" name="prezzo_prodotto" class="lista-input lista-price" value="{{ '%.2f'|format(p.prezzo_stimato) }}" placeholder="0.00" inputmode="decimal">
+                                    <button type="button" class="lista-row-del" aria-label="Rimuovi prodotto">✕</button>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            <button type="button" class="btn-outline lista-add-row" style="font-size: 13px; padding: 6px 14px; margin-top: 4px;">+ Aggiungi prodotto</button>
+
+                            <div class="lista-edit-actions">
+                                <button type="submit" name="azione" value="salva" class="btn-success">Salva</button>
+                                <button type="submit" name="azione" value="ristima" class="btn-primary lista-reestimate">↻ Ristima con AI</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
             {% endfor %}
         {% else %}

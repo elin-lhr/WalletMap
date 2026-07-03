@@ -80,7 +80,7 @@
         {% else %}
         <div style="background: var(--lime); border: var(--border-thick); padding: 16px 18px; display: flex; align-items: center; gap: 10px;">
             <span style="font-size: 1.1rem; flex-shrink: 0;">✓</span>
-            <span style="font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 2px;">Nessun abbonamento in scadenza nei prossimi 7 giorni</span>
+            <span style="font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 2px;">Nessun abbonamento in scadenza a breve</span>
         </div>
         {% endif %}
     </div>
@@ -113,7 +113,9 @@
                 <span style="font-family: 'Space Grotesk', sans-serif; font-size: 9px; font-weight: 700; margin-bottom: 3px; white-space: nowrap;">€{{ "%.0f"|format(m.entrate) }}</span>
                 {% endif %}
                 {% if m.h_entrate > 0 %}
-                <div style="width: 100%; height: {{ m.h_entrate }}px; background: var(--lime); border: var(--border-thick);"></div>
+                <div class="chart-bar" style="width: 100%; height: {{ m.h_entrate }}px; background: var(--lime); border: var(--border-thick);"
+                     data-modal="det-{{ loop.index0 }}-e" role="button" tabindex="0"
+                     aria-label="Dettaglio entrate {{ m.mese }}" title="Vedi dettaglio entrate"></div>
                 {% endif %}
             </div>
 
@@ -123,7 +125,9 @@
                 <span style="font-family: 'Space Grotesk', sans-serif; font-size: 9px; font-weight: 700; margin-bottom: 3px; white-space: nowrap;">€{{ "%.0f"|format(m.uscite) }}</span>
                 {% endif %}
                 {% if m.h_uscite > 0 %}
-                <div style="width: 100%; height: {{ m.h_uscite }}px; background: var(--pink); border: var(--border-thick);"></div>
+                <div class="chart-bar" style="width: 100%; height: {{ m.h_uscite }}px; background: var(--pink); border: var(--border-thick);"
+                     data-modal="det-{{ loop.index0 }}-u" role="button" tabindex="0"
+                     aria-label="Dettaglio uscite {{ m.mese }}" title="Vedi dettaglio uscite"></div>
                 {% endif %}
             </div>
 
@@ -138,5 +142,63 @@
         {% endfor %}
     </div>
 </div>
+
+{# ── Pop-up dettaglio andamento (uno per barra con valore > 0) ── #}
+{% for m in andamento %}
+    {% if m.entrate > 0 %}
+    <div class="detail-overlay" id="det-{{ loop.index0 }}-e" aria-hidden="true">
+        <div class="detail-modal" role="dialog" aria-modal="true" aria-label="Dettaglio entrate {{ m.mese }}">
+            <div class="detail-head" style="background: var(--lime);">
+                <span class="detail-modal-title">Entrate · {{ m.mese }}</span>
+                <button type="button" class="detail-close" data-close aria-label="Chiudi">✕</button>
+            </div>
+            <div class="detail-body">
+                <div class="detail-total">Totale: € {{ "%.2f"|format(m.entrate) }}</div>
+                <ul class="detail-list">
+                    {% for d in m.entrate_dettaglio %}
+                    <li class="detail-row">
+                        <div class="detail-top">
+                            <span class="detail-cat">{{ d.categoria }}</span>
+                            <span class="detail-amount">€ {{ "%.2f"|format(d.importo) }}</span>
+                        </div>
+                        <div class="detail-sub">
+                            <span class="detail-date">{{ d.data }}</span>
+                            {% if d.nota %}<span class="detail-note">{{ d.nota }}</span>{% endif %}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if m.uscite > 0 %}
+    <div class="detail-overlay" id="det-{{ loop.index0 }}-u" aria-hidden="true">
+        <div class="detail-modal" role="dialog" aria-modal="true" aria-label="Dettaglio uscite {{ m.mese }}">
+            <div class="detail-head" style="background: var(--pink);">
+                <span class="detail-modal-title">Uscite · {{ m.mese }}</span>
+                <button type="button" class="detail-close" data-close aria-label="Chiudi">✕</button>
+            </div>
+            <div class="detail-body">
+                <div class="detail-total">Totale: € {{ "%.2f"|format(m.uscite) }}</div>
+                <ul class="detail-list">
+                    {% for d in m.uscite_dettaglio %}
+                    <li class="detail-row">
+                        <div class="detail-top">
+                            <span class="detail-cat">{{ d.categoria }}</span>
+                            <span class="detail-amount">€ {{ "%.2f"|format(d.importo) }}</span>
+                        </div>
+                        <div class="detail-sub">
+                            <span class="detail-date">{{ d.data }}</span>
+                            {% if d.nota %}<span class="detail-note">{{ d.nota }}</span>{% endif %}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endfor %}
 
 {% endblock %}

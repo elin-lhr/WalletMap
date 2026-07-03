@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Cookie Policy — WalletMap{% endblock %}
+
+{% block content %}
+<section class="legal">
+    <h1>Cookie Policy</h1>
+    <p class="legal-updated">Ultimo aggiornamento: {{ current_year }}</p>
+
+    <p>Questa pagina spiega quali cookie utilizza WalletMap. Utilizziamo
+    <strong>solo cookie tecnici</strong>, necessari al funzionamento del sito.
+    Non usiamo cookie di profilazione, pubblicitari o di tracciamento.</p>
+
+    <h2>1. Cosa sono i cookie</h2>
+    <p>I cookie sono piccoli file di testo che un sito salva sul tuo dispositivo
+    per permettere alcune funzionalità di base.</p>
+
+    <h2>2. Cookie utilizzati</h2>
+    <ul>
+        <li><strong>Cookie di sessione</strong> (<code>session</code>): mantiene
+        attivo il tuo accesso dopo il login e protegge i form da attacchi CSRF.
+        È indispensabile e si cancella alla chiusura della sessione.</li>
+        <li><strong>Consenso cookie</strong>: memorizza la tua scelta sul banner,
+        così da non mostrartelo di nuovo.</li>
+    </ul>
+
+    <h2>3. Cookie di terze parti</h2>
+    <p>WalletMap non installa cookie di terze parti né strumenti di analisi o
+    marketing.</p>
+
+    <h2>4. Gestione dei cookie</h2>
+    <p>Essendo cookie tecnici, sono necessari al funzionamento del servizio.
+    Puoi comunque eliminarli o bloccarli dalle impostazioni del tuo browser,
+    tenendo presente che in tal caso l'accesso all'area riservata potrebbe non
+    funzionare correttamente.</p>
+
+    <p class="legal-note">Trattandosi di un progetto a scopo didattico, questa
+    policy ha carattere esemplificativo.</p>
+</section>
+{% endblock %}

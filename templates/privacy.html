@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy — WalletMap{% endblock %}
+
+{% block content %}
+<section class="legal">
+    <h1>Informativa sulla Privacy</h1>
+    <p class="legal-updated">Ultimo aggiornamento: {{ current_year }}</p>
+
+    <p>WalletMap è un'applicazione dimostrativa di finanza personale. Questa
+    informativa spiega quali dati trattiamo e come li utilizziamo, nel rispetto
+    del Regolamento (UE) 2016/679 (GDPR).</p>
+
+    <h2>1. Dati che raccogliamo</h2>
+    <ul>
+        <li><strong>Dati dell'account:</strong> username ed email.</li>
+        <li><strong>Password:</strong> conservata esclusivamente in forma
+        <em>hashata</em> (pbkdf2:sha256), mai in chiaro.</li>
+        <li><strong>Dati finanziari inseriti da te:</strong> spese, entrate,
+        budget, abbonamenti e liste della spesa.</li>
+    </ul>
+
+    <h2>2. Finalità e base giuridica</h2>
+    <p>I dati sono trattati unicamente per fornirti il servizio (registrazione,
+    accesso e gestione del tuo portafoglio). La base giuridica è l'esecuzione
+    del servizio che richiedi e il tuo consenso.</p>
+
+    <h2>3. Servizi di terze parti</h2>
+    <ul>
+        <li><strong>Groq:</strong> per la stima AI dei prezzi, i soli nomi dei
+        prodotti che inserisci nella lista della spesa vengono inviati al
+        servizio. Nessun dato dell'account viene condiviso.</li>
+        <li><strong>ExchangeRate-API:</strong> usata per i tassi di cambio; non
+        riceve alcun tuo dato personale.</li>
+        <li><strong>Render:</strong> piattaforma di hosting dell'applicazione.</li>
+    </ul>
+
+    <h2>4. Conservazione</h2>
+    <p>I dati sono conservati finché il tuo account è attivo. Puoi eliminare
+    l'account in qualsiasi momento dalla pagina Profilo: la cancellazione
+    rimuove definitivamente tutti i dati collegati.</p>
+
+    <h2>5. I tuoi diritti</h2>
+    <ul>
+        <li><strong>Accesso e portabilità:</strong> puoi esportare tutte le tue
+        spese in formato CSV o Excel.</li>
+        <li><strong>Cancellazione:</strong> tramite la funzione «Elimina account».</li>
+        <li><strong>Rettifica:</strong> puoi modificare i tuoi dati e la password.</li>
+    </ul>
+
+    <h2>6. Contatti</h2>
+    <p>Per qualsiasi richiesta relativa al trattamento dei dati puoi scrivere
+    tramite il <a href="https://github.com/elin-lhr/WalletMap" target="_blank" rel="noopener">repository del progetto</a>.</p>
+
+    <p class="legal-note">Trattandosi di un progetto a scopo didattico, questa
+    informativa ha carattere esemplificativo.</p>
+</section>
+{% endblock %}

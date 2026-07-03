@@ -11,7 +11,7 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="navbar-brand">WalletMap</div>
+        <a href="{{ url_for('dashboard') if current_user else url_for('index') }}" class="navbar-brand">WalletMap</a>
         <ul class="navbar-links">
             {% if current_user %}
                 <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
@@ -41,7 +41,19 @@
     </main>
 
     <footer class="footer">
-        <p>&copy; {{ current_year }} WalletMap</p>
+        {# Striscia decorativa colorata #}
+        <div class="footer-strip" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+        </div>
+
+        <div class="footer-bar">
+            <a href="{{ url_for('index') }}" class="footer-brand">WalletMap</a>
+            <div class="footer-legal">
+                <span class="footer-copy">&copy; {{ current_year }} WalletMap</span>
+                <a href="{{ url_for('privacy') }}">Privacy</a>
+                <a href="{{ url_for('cookie_policy') }}">Cookie Policy</a>
+            </div>
+        </div>
     </footer>
 
     {# Banner cookie GDPR: visibile finché l'utente non accetta.
@@ -49,14 +61,18 @@
     {% if session.get('cookie_consent') is not true
           and (current_user is none or current_user.cookie_consent is not true) %}
     <div class="cookie-banner">
-        <p>Questo sito usa cookie tecnici per il funzionamento.
-           Continuando accetti il trattamento dei dati.</p>
-        <form action="{{ url_for('cookie_consent') }}" method="POST">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit" class="btn-primary">Accetta</button>
-        </form>
+        <p><span class="cookie-emoji">🍪</span> Usiamo solo cookie tecnici per far funzionare il sito.</p>
+        <div class="cookie-actions">
+            <form action="{{ url_for('cookie_consent') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-primary cookie-accept">Accetta</button>
+            </form>
+            <a href="{{ url_for('cookie_policy') }}" class="cookie-link">Cookie Policy</a>
+        </div>
     </div>
     {% endif %}
 
+    {# Widget UI custom: select e date picker in stile brutalista #}
+    <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
 </body>
 </html>

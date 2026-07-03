@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField, PasswordField, EmailField, SubmitField,
-    FloatField, SelectField, DateField, TextAreaField, IntegerField
+    FloatField, SelectField, DateField, TextAreaField, IntegerField,
+    BooleanField
 )
 from wtforms.validators import DataRequired, Length, Email, EqualTo, Optional
 
@@ -19,6 +20,7 @@ CATEGORIE = [
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
+    ricordami = BooleanField('Ricordami')
     submit = SubmitField('Accedi')
 
 

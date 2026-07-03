@@ -4,7 +4,7 @@ import csv
 import json
 import calendar
 from functools import wraps
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 import openpyxl
 from openpyxl.styles import Font
@@ -18,6 +18,15 @@ from services import stima_prezzi, get_tasso_cambio
 app = Flask(__name__)
 env = os.environ.get('FLASK_ENV', 'development')
 app.config.from_object(config_map.get(env, config_map['development']))
+
+# SECRET_KEY: obbligatoria in produzione, fallback insicuro solo in sviluppo.
+if not app.config.get('SECRET_KEY'):
+    if env == 'production':
+        raise RuntimeError(
+            'SECRET_KEY non impostata: è obbligatoria in produzione. '
+            'Configurala nelle variabili d\'ambiente.'
+        )
+    app.config['SECRET_KEY'] = 'dev-insecure-key-not-for-production'
 
 csrf = CSRFProtect(app)
 db.init_app(app)
@@ -54,6 +63,9 @@ def inject_globals():
 
 @app.route('/')
 def index():
+    # Se già loggato, la home porta dritto in dashboard (niente landing "Accedi").
+    if 'user_id' in session:
+        return redirect(url_for('dashboard'))
     return render_template('index.html')
 
 
@@ -71,10 +83,22 @@ def cookie_consent():
     return redirect(request.referrer or url_for('index'))
 
 
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html')
+
+
+@app.route('/cookie-policy')
+def cookie_policy():
+    return render_template('cookie_policy.html')
+
+
 # ========== Auth Routes ==========
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if 'user_id' in session:
+        return redirect(url_for('dashboard'))
     form = LoginForm()
     if form.validate_on_submit():
         username = form.username.data.strip()
@@ -86,6 +110,9 @@ def login():
             return render_template('login.html', form=form)
 
         session['user_id'] = user.id
+        # "Ricordami": sessione persistente (PERMANENT_SESSION_LIFETIME) vs
+        # cookie di sessione che scade alla chiusura del browser.
+        session.permanent = bool(form.ricordami.data)
         flash('Login effettuato!', 'success')
         return redirect(url_for('dashboard'))
 
@@ -101,6 +128,8 @@ def logout():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if 'user_id' in session:
+        return redirect(url_for('dashboard'))
     form = RegisterForm()
     if form.validate_on_submit():
         username = form.username.data.strip()
@@ -135,7 +164,7 @@ def register():
 @app.route('/profile')
 @login_required
 def profile():
-    user = User.query.get(session['user_id'])
+    user = db.session.get(User, session['user_id'])
     spese_count = Spesa.query.filter_by(user_id=user.id).count()
     budget_count = Budget.query.filter_by(user_id=user.id).count()
     abbonamenti_count = Abbonamento.query.filter_by(user_id=user.id, attivo=True).count()
@@ -211,18 +240,36 @@ def dashboard():
     spese_per_categoria = dict(
         sorted(spese_per_categoria.items(), key=lambda x: x[1], reverse=True))
 
+    def _dettaglio(items):
+        # Serializza le transazioni per il pop-up di dettaglio (più recenti prima).
+        return [
+            {
+                'data': s.data.strftime('%d/%m/%Y'),
+                'categoria': s.categoria,
+                'importo': s.importo,
+                'nota': s.nota or '',
+            }
+            for s in sorted(items, key=lambda x: x.data, reverse=True)
+        ]
+
     andamento = []
     for i in range(5, -1, -1):
         mese_dt = today - relativedelta(months=i)
-        e = round(sum(s.importo for s in tutte_spese
-                      if s.tipo == 'entrata'
-                      and s.data.month == mese_dt.month
-                      and s.data.year  == mese_dt.year), 2)
-        u = round(sum(s.importo for s in tutte_spese
-                      if s.tipo == 'uscita'
-                      and s.data.month == mese_dt.month
-                      and s.data.year  == mese_dt.year), 2)
-        andamento.append({'mese': MESI_IT[mese_dt.month], 'entrate': e, 'uscite': u})
+        entrate_items = [s for s in tutte_spese
+                         if s.tipo == 'entrata'
+                         and s.data.month == mese_dt.month
+                         and s.data.year == mese_dt.year]
+        uscite_items = [s for s in tutte_spese
+                        if s.tipo == 'uscita'
+                        and s.data.month == mese_dt.month
+                        and s.data.year == mese_dt.year]
+        andamento.append({
+            'mese': MESI_IT[mese_dt.month],
+            'entrate': round(sum(s.importo for s in entrate_items), 2),
+            'uscite': round(sum(s.importo for s in uscite_items), 2),
+            'entrate_dettaglio': _dettaglio(entrate_items),
+            'uscite_dettaglio': _dettaglio(uscite_items),
+        })
 
     vals = [m['entrate'] for m in andamento] + [m['uscite'] for m in andamento]
     max_val = max(vals) if any(v > 0 for v in vals) else 1
@@ -230,14 +277,14 @@ def dashboard():
         m['h_entrate'] = int((m['entrate'] / max_val) * 160)
         m['h_uscite']  = int((m['uscite']  / max_val) * 160)
 
-    scadenza_limite = today + timedelta(days=7)
     abb_raw = (
         Abbonamento.query
         .filter_by(user_id=session['user_id'], attivo=True)
-        .filter(Abbonamento.prossimo_rinnovo <= scadenza_limite)
         .order_by(Abbonamento.prossimo_rinnovo.asc())
         .all()
     )
+    # Mostra ogni abbonamento entro la sua finestra di preavviso personale
+    # (giorni_preavviso), non un fisso di 7 giorni uguale per tutti.
     abbonamenti_scadenza = [
         {
             'nome': a.nome,
@@ -246,6 +293,7 @@ def dashboard():
             'giorni_rimanenti': (a.prossimo_rinnovo - today).days,
         }
         for a in abb_raw
+        if (a.prossimo_rinnovo - today).days <= (a.giorni_preavviso or 0)
     ]
 
     return render_template(
@@ -517,6 +565,50 @@ def lista_spesa():
         .all()
     )
     return render_template('lista_spesa.html', form=form, liste=liste)
+
+
+@app.route('/lista-spesa/modifica/<int:id>', methods=['POST'])
+@login_required
+def modifica_lista(id):
+    lista = ListaSpesa.query.get_or_404(id)
+    if lista.user_id != session['user_id']:
+        flash('Non autorizzato', 'error')
+        return redirect(url_for('lista_spesa'))
+
+    nome = (request.form.get('nome') or '').strip() or lista.nome
+    nomi = request.form.getlist('nome_prodotto')
+    prezzi = request.form.getlist('prezzo_prodotto')
+    azione = request.form.get('azione', 'salva')
+
+    # Tiene solo le righe con un nome non vuoto; il prezzo diventa 0 se assente/non valido.
+    prodotti = []
+    for i, n in enumerate(nomi):
+        n = n.strip()
+        if not n:
+            continue
+        prezzo = 0.0
+        if i < len(prezzi):
+            try:
+                prezzo = float((prezzi[i] or '0').replace(',', '.'))
+            except ValueError:
+                prezzo = 0.0
+        prodotti.append({'nome': n, 'prezzo_stimato': round(prezzo, 2)})
+
+    # "Ristima con AI": ricalcola i prezzi sui nomi correnti tramite Groq.
+    if azione == 'ristima' and prodotti:
+        stima = stima_prezzi([p['nome'] for p in prodotti])
+        if stima is None:
+            flash('Servizio di stima non disponibile. Modifiche non applicate.', 'error')
+            return redirect(url_for('lista_spesa'))
+        prodotti = stima['prodotti']
+
+    totale = round(sum(p['prezzo_stimato'] for p in prodotti), 2)
+    lista.nome = nome
+    lista.prodotti = json.dumps({'prodotti': prodotti, 'totale': totale}, ensure_ascii=False)
+    lista.totale_stimato = totale
+    db.session.commit()
+    flash('Lista aggiornata!', 'success')
+    return redirect(url_for('lista_spesa'))
 
 
 @app.route('/lista-spesa/elimina/<int:id>', methods=['POST'])
