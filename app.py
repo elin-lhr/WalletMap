@@ -10,6 +10,7 @@ import openpyxl
 from openpyxl.styles import Font
 from flask import Flask, render_template, request, redirect, url_for, flash, session, make_response
 from flask_wtf.csrf import CSRFProtect
+from sqlalchemy import inspect, text
 from models import db, User, Spesa, Budget, Abbonamento, ListaSpesa
 from forms import LoginForm, RegisterForm, SpesaForm, BudgetForm, AbbonamentoForm, ListaSpesaForm, CambioPasswordForm
 from config import config_map
@@ -693,8 +694,35 @@ def export_excel():
     return response
 
 
+def ensure_schema():
+    """Aggiunge colonne mancanti a tabelle già esistenti: db.create_all() crea
+    solo le tabelle nuove, non fa ALTER. Necessario su DB creati prima delle
+    colonne multi-valuta (es. il Postgres di Render aveva 'spesa' senza
+    'valuta'/'importo_originale', causando errori su ogni query)."""
+    inspector = inspect(db.engine)
+    if 'spesa' not in inspector.get_table_names():
+        return
+    cols = {c['name'] for c in inspector.get_columns('spesa')}
+    migrazioni = []
+    if 'valuta' not in cols:
+        migrazioni.append("ALTER TABLE spesa ADD COLUMN valuta VARCHAR(3) DEFAULT 'EUR' NOT NULL")
+    if 'importo_originale' not in cols:
+        migrazioni.append("ALTER TABLE spesa ADD COLUMN importo_originale FLOAT")
+    if not migrazioni:
+        return
+    try:
+        for stmt in migrazioni:
+            db.session.execute(text(stmt))
+        db.session.commit()
+        print('ensure_schema: colonne aggiunte ->', migrazioni)
+    except Exception as e:
+        db.session.rollback()
+        print('ensure_schema: migrazione fallita:', e)
+
+
 with app.app_context():
     db.create_all()
+    ensure_schema()
 
 
 # ========== Error Handlers ==========
